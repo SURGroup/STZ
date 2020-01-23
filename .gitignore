@@ -1,32 +1,68 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
+# Compiled source
+*.com
+*.class
 *.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
 *.exe
+*.o
+*.a
+*.so
+*.pyc
+*.pyo
+*.dylib
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.xz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# LaTeX intermediate files
+*.aux
+*.bbl
 *.out
-*.app
+*.blg
+*.log
+*.spl
+*.fdb_latexmk
+*.fls
+*.dvi
+
+# Vim backups
+*.bak
+*.swp
+*.swo
+*~
+
+# Debug files
+*.dSYM/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Configuration file - this should never be checked in, since it would conflict
+# with those created by other users
+config.mk
+
+# Gnuplot template files
+temp_field*
+temp*.gnuplot
+temp_*
+*.0
+
+# Fluid_2d temp files
+test*
+
+# Output directories
+*.odr
