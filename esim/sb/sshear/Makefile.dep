@@ -1,0 +1,2 @@
+sbsim.o: sbsim.cc sbsim.hh
+common.o: common.cc common.hh

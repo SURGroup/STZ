@@ -1,0 +1,23 @@
+# Compiler and compilation flags
+
+# C++ compiler name
+cxx=g++-5 -fopenmp
+
+# Compiler flags. If available, add "-fopemp" to enable multithreading using
+# the OpenMP library.
+cflags=-Wall -ansi -pedantic -O3 -g
+
+# Flags to link to LAPACK routine. On Mac OS 10.8-10.10, "-framework
+# Accelerate" will work. On Linux, uncommenting the second line will often
+# work with a standard installation.
+lflags=-framework Accelerate
+#lflags=-llapack -lblas
+
+# Compiler for ImageMagick-dependent executables. These must be defined separately
+# due to linking issues on the Mac.
+im_cxx=g++
+im_cflags=-DHAS_IMAGEMAGICK `Magick++-config --cppflags --cxxflags` $(cflags) -Wno-long-long
+im_lflags=`Magick++-config --ldflags --libs`
+
+# MPI compiler
+mpicxx=mpicxx -Wno-long-long

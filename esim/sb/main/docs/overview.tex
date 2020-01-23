@@ -1,0 +1,93 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,hyperref,amsmath,amsfonts,color}
+
+\bibliographystyle{amsplain}
+
+\newcommand{\p}{\partial}
+\newcommand{\mgphi}{|\nabla \phi|}
+\newcommand{\GPa}{\textrm{~GPa}}
+\newcommand{\MPa}{\textrm{~MPa}}
+\newcommand{\um}{\textrm{~$\mu$m}}
+\newcommand{\drt}[1]{\frac{d #1}{d t}}
+\newcommand{\prx}[1]{\frac{\p #1}{\p x}}
+\newcommand{\pry}[1]{\frac{\p #1}{\p y}}
+\newcommand{\Dpl}{D^\textrm{pl}}
+\newcommand{\tT}{\tilde{t}}
+\newcommand{\xT}{\tilde{x}}
+\newcommand{\yT}{\tilde{y}}
+\newcommand{\rT}{\tilde{r}}
+\newcommand{\uT}{\tilde{u}}
+\newcommand{\vT}{\tilde{v}}
+\newcommand{\KT}{\tilde{K}}
+\newcommand{\pT}{\tilde{p}}
+\newcommand{\sT}{\tilde{s}}
+\newcommand{\tauT}{\tilde{\tau}}
+\newcommand{\muT}{\tilde{\mu}}
+\newcommand{\drtT}[1]{\frac{d #1}{d \tT}}
+\newcommand{\prxT}[1]{\frac{\p #1}{\p \xT}}
+\newcommand{\pryT}[1]{\frac{\p #1}{\p \yT}}
+\newcommand{\QT}{\tilde{Q}}
+\newcommand{\sY}{s_Y}
+\newcommand{\Kfac}{K_I^*}
+\newcommand{\sC}{\mathcal{C}}
+\newcommand{\bs}{\bar{s}}
+\newcommand{\scT}{\mathcal{T}}
+\newcommand{\mub}{\bar{\mu}}
+\newcommand{\TK}{\textrm{~K}}
+
+\definecolor{Blue}{rgb}{0.12,0.05,0.9}
+\newcommand{\q}[1]{\textcolor{Blue}{#1}}
+
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arctanh}{arctanh}
+
+\begin{document}
+\section*{A quasistatic limit to the thermal STZ model}
+In dimensionless form, the two-dimensional thermal STZ model can be written as
+the elastoplastic system
+\begin{eqnarray}
+  \muT \drtT{\uT}&=&-\prxT{\pT}+\prxT{\sT}+\pryT{\tauT} \\
+  \muT \drtT{\vT}&=&-\pryT{\pT}-\pryT{\sT}+\prxT{\tauT} \\
+  \drtT{\pT} &=& \KT \left(\prxT{\uT} +\pryT{\vT}\right) \\
+  \drtT{\sT} &=& 2\tilde{\omega} \tauT + \muT\left( \prxT{\uT} - \pryT{\vT} \right) - \muT \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\sT}{\bs} \\
+  \drtT{\tauT} &=& - 2\tilde{\omega} \sT + \muT \left( \pryT{\uT} - \prxT{\vT} \right) - \muT \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\tauT}{\bs}.
+\end{eqnarray}
+Here $\uT$ and $\vT$ are the dimensionless velocities, and $\tilde{\omega}$ is
+the spin. $\pT$ is the pressure and $\sT$ and $\tauT$ are the deviatoric parts
+of the stress tensor; they are dimensionless, and are scaled so that plastic
+yield occurs for $\bar{s}=\sqrt{\sT^2+\tauT^2}>1$. Plastic deformation is controlled by
+the $\Dpl$ quantity which is very small. We impose velocity boundary conditions
+from the Irwin crack tip solutions.
+
+To mimic physically realistic strain rates, the dimensionless velocities $\uT$
+and $\vT$ must be small. One possible way to consider this would be with
+\begin{eqnarray*}
+\uT &=& \epsilon U \\
+\vT &=& \epsilon V \\
+\tT &=& T/\epsilon,
+\end{eqnarray*}
+and aiming that $U$, $V$, and $T$ become $O(1)$ quantities. The system of
+equations would then become 
+\begin{eqnarray}
+  \label{eq:eps_u} \muT \epsilon^2 \frac{dU}{dT}&=&-\prxT{\pT}+\prxT{\sT}+\pryT{\tauT} \\
+  \label{eq:eps_v} \muT \epsilon^2 \frac{dV}{dT}&=&-\pryT{\pT}-\pryT{\sT}+\prxT{\tauT} \\
+  \frac{d\pT}{dT} &=& \KT \left(\prxT{U} +\pryT{V}\right) \\
+  \frac{d\sT}{dT} &=& 2\Omega \tauT + \muT \left( \prxT{U} - \pryT{V} \right) - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\sT}{\bs} \\
+  \frac{d\tauT}{dT} &=& - 2\Omega \sT + \muT \left( \pryT{U} - \prxT{V} \right) - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\tauT}{\bs}.
+\end{eqnarray}
+where $\Omega= (\p V /\p x - \p U / \p y)/2$. The $\epsilon^{-1}$ term on
+the $\Dpl$ term looks promising, since this can balance out the fact
+that this term is small.
+
+The $\epsilon^2$ terms in Eqs.~\ref{eq:eps_u} and~\ref{eq:eps_v} suggest that
+we may just want to solve
+\begin{eqnarray}
+  0&=&-\prxT{\pT}+\prxT{\sT}+\pryT{\tauT} \\
+  0&=&-\pryT{\pT}-\pryT{\sT}+\prxT{\tauT}.
+\end{eqnarray}
+However, with this, we lose the ability to track $U$ and $V$ explicitly. We would
+have to solve for them via the remaining equations. Will this be well-posed
+and numerically stable? Currently, I use a small viscosity in Eqs.~\ref{eq:eps_u}
+and~\ref{eq:eps_v}. If I leave this in there, these equations will look like
+a Poisson equation. Maybe something like a projection method can be used?
+\end{document}

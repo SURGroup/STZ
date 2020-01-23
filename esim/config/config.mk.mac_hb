@@ -1,0 +1,18 @@
+# Compiler and compilation flags
+cc=gcc-9
+cxx=g++-9 -fopenmp
+cflags=-Wall -ansi -pedantic -O3
+
+# MPI compiler
+mpicxx=mpicxx -Wno-long-long
+
+# Flags for linking to PNG library
+png_iflags=-DHAS_PNG
+png_lflags=-lpng
+
+# Flags for FFTW library
+fftw_iflags=
+fftw_lflags=-lfftw3
+
+# LAPACK flags for linear algebra
+lp_lflags=-framework Accelerate

@@ -1,0 +1,48 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,amsmath,amsfonts,microtype,graphicx}
+\usepackage[T1]{fontenc}
+\usepackage{MnSymbol}
+\usepackage[mathlf,textlf,minionint]{MinionPro}
+\usepackage[font=small]{caption}
+\include{hyper}
+\pagestyle{empty}
+
+\newcommand{\p}{\partial}
+
+\begin{document}
+\section*{Stability calculation}
+Consider the one-dimensional diffusion equation
+\begin{equation}
+  \label{eq:cdiff}
+  \frac{\p f}{\p t} = b \frac{\p^2 f}{\p x^2}
+\end{equation}
+for a constant $b>0$ and unknown function $f(x,t)$. Let $f_{j,k}$ be the discretized field with
+grid spacings $\Delta x$ and $\Delta t$. Then Eq.~\ref{eq:cdiff} can be written as
+\begin{equation}
+  \label{eq:ddiff}
+  \frac{f_{j,k+1}-f_{j,k}}{\Delta t} = b \frac{f_{j+1,k} - 2f_{j,k} + f_{j-1,k}}{\Delta x^2}.
+\end{equation}
+By defining \smash{$\lambda=\frac{b\Delta t}{\Delta x^2}$}, Eq.~\ref{eq:ddiff} gives an
+explicit update formula,
+\begin{equation}
+  \label{eq:tstep}
+  f_{j,k+1} = (1 - 2\lambda)f_{j,k} + \lambda(f_{j+1,k}+f_{j-1,k}),
+\end{equation}
+for the function values at the $(k+1)$th timestep in terms of the values at the
+$k$th timestep. Suppose that the values at the $k$th timestep are a wave with
+angular frequency $\omega$, so that
+\begin{equation}
+  f_{j,k} = e^{i\omega j}.
+\end{equation}
+Then Eq.~\ref{eq:tstep} gives
+\begin{eqnarray}
+  f_{j,k+1} &=& (1 - 2\lambda) e^{i \omega j} + \lambda e^{i\omega j} ( e^{i\omega} + e^{-i\omega}) \nonumber \\
+  &=& e^{i\omega j} (1 + 2\lambda (\cos \omega - 1) )
+\end{eqnarray}
+and hence the wave is scaled by a factor of $2\lambda (\cos \omega -1)$. To be
+stable, this factor should not have magnitude greater than one for all choices
+of $\omega$, and hence \smash{$\lambda \le \frac{1}{2}$}, or equivalently
+\begin{equation}
+  \Delta t \le \frac{\Delta x^2}{2b}.
+\end{equation}
+\end{document}

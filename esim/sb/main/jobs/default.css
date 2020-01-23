@@ -1,0 +1,44 @@
+body {
+	background: #fff;
+}
+
+h1 {
+	font: bold large Verdana, sans-serif;
+	color: #64d;
+}
+
+table {
+	padding:0;
+	margin:0;
+	border-collapse:collapse;
+	border: solid 2px #bbb;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+table tr th,
+table tr td {
+	white-space: nowrap;
+	padding: 3px;
+	margin: 0;
+	border: solid 2px #bbb;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+}
+
+table tr th {
+	font: bold small verdana, sans-serif;
+}
+
+table tr.odd td {
+	background: #e7e7ff;
+}
+
+table tr.even td {
+	background: $fff;
+}
+
+table tr td {
+	font: normal small verdana, sans-serif;
+}

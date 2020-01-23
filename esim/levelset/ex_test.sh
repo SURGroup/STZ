@@ -1,0 +1,15 @@
+./ex_test 32 100000 >> ex_band_derwent
+./ex_test 48 10000 >> ex_band_derwent
+./ex_test 64 10000 >> ex_band_derwent
+./ex_test 96 2000 >> ex_band_derwent
+./ex_test 128 1000 >> ex_band_derwent
+./ex_test 192 1000 >> ex_band_derwent
+./ex_test 256 1000 >> ex_band_derwent
+./ex_test 384 500 >> ex_band_derwent
+./ex_test 512 200 >> ex_band_derwent
+./ex_test 768 100 >> ex_band_derwent
+./ex_test 1024 50 >> ex_band_derwent
+./ex_test 1536 25 >> ex_band_derwent
+./ex_test 2048 10 >> ex_band_derwent
+./ex_test 3072 5 >> ex_band_derwent
+./ex_test 4096 3 >> ex_band_derwent

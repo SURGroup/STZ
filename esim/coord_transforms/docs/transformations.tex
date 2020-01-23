@@ -1,0 +1,610 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{setspace}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2cm,bmargin=2cm,lmargin=1.5cm,rmargin=1.5cm}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[noadjust]{cite}
+\usepackage{bm,graphicx,color,enumerate}
+\usepackage{amsmath,amssymb,amsfonts}
+%\usepackage{fullpage}
+\usepackage{epsfig}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{lscape}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{float}
+\usepackage{transparent}
+%\usepackage{lmodern} % load a font with all the characters
+%\usepackage{subfigure}
+%\usepackage{subfig}
+%\usepackage{wrapfig}
+%\usepackage[countmax]{subfloat}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{epstopdf}
+\usepackage{bookmark}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage[usenames]{xcolor}
+\usepackage{multirow}
+\usepackage[normalem]{ulem}
+\usepackage{comment}
+\setlength{\unitlength}{1mm}
+%\renewcommand{\includegraphics}[2][]{\rule{0pt}{0pt}}
+\hypersetup{
+   colorlinks,
+  linkcolor={blue!100!black},
+  citecolor={green!50!black},
+  urlcolor={blue!80!black}
+}
+\onehalfspacing
+
+\newcommand{\p}{\partial}
+\newcommand{\bU}{\mathbf{U}}
+\newcommand{\bX}{\mathbf{X}}
+\newcommand{\bx}{\mathbf{x}}
+\newcommand{\bu}{\mathbf{u}}
+\newcommand{\Grad}{\nabla_{\bX}}
+\newcommand{\grad}{\nabla_{\bx}}
+\newcommand{\Adv}{\left(\bU \cdot \nabla_{\bX}\right)}
+\newcommand{\SXX}{\Sigma_{XX}}
+\newcommand{\SYY}{\Sigma_{YY}}
+\newcommand{\SXY}{\Sigma_{XY}}
+\newcommand{\bSig}{\boldsymbol{\Sigma}}
+\newcommand{\bsig}{\boldsymbol\sigma}
+\newcommand{\bT}{\mathbf{T}}
+\newcommand{\bC}{\mathbf{C}}
+\newcommand{\bD}{\mathbf{D}}
+\newcommand{\bDpl}{\mathbf{D}^{pl}}
+\newcommand{\Dpl}{D^{pl}}
+\newcommand{\bl}{\mathbf{l}}
+\newcommand{\bI}{\mathbf{I}}
+
+\begin{document}
+\title{Spatially-varying coordinate transformation formulation}
+\author{Avraham Moriel and Nicholas Boffi}
+\maketitle
+
+%\date{\today}
+
+\begin{abstract}
+Necking instability may emerge when one stretches a material in one direction, allowing the perpendicular directions to deform freely. We first propose a transformation that should enable for the necking phenomena to emerge. Using a decomposition of the general form $\bm{x}=\bm{T}\left(\bm{X},t\right) \bm{X}$, we derive the differential operators and equations that should enable us to study necking. Heads up - this escalates quickly.
+\end{abstract}
+\section{Generic transformation}\label{se:generic}
+First, we consider the most generic transformation in the form
+\begin{equation}\label{eq:trans_generic}
+  \bm{r} = \bm{f}\left(\bm{R}\right) \ ,
+\end{equation}
+where $\bm{r}$ is actually composed of a time coordinate $t$, and two spatial coordinates $x$ and $y$, $\bm{R}$ is the transformed counterpart of $\bm{r}$ and is composed of $\tau$, $X$ and $Y$, and $\bm{f}$ should be understood as being composed of $f_\tau\left(\tau,X,Y\right),f_x\left(\tau,X,Y\right), f_y\left(\tau,X,Y\right)$. For our future convenience, we use the letters $i,j,k,l...$ as index notations in the physical frame, and capitalized letters $I,J,K,L...$ as index notations in the transformed coordinates, that can take values of $0,1,2$ where $0$ corresponds to the time index, and $1,2$ correspond to spatial directions. A generalization to any spacial dimension $d$ could be easily obtained by letting the indexes run from the time index $0$ to the spatial dimension $d$.
+\subsection{Transformed differential operators} \label{sse:T_diff_op}
+The differentials could be written compactly as
+\begin{equation}\label{eq:diff_generic_explicit}
+  dr_i = \partial_J f_i dR_J \ ,
+\end{equation}
+or in completely tensoric notation as
+\begin{equation}\label{eq:diff_generic_tensor}
+  d\bm{r}= \nabla_{\bm{R}} \bm{f}\cdot d\bm{R}
+\end{equation}
+With this at hand, we can derive the differential operators as
+
+\begin{equation}\label{eq:derivatives_generic}
+\begin{split}
+   \partial_i  & = \left(\nabla f\right)^{-T}_{iJ} \partial_J \ , \\
+   \nabla_{\bm{r}}  & = \left(\nabla_{\bm{R}} \bm{f}\right)^{-T}\cdot \nabla_{\bm{R}} \ ,
+\end{split}
+\end{equation}
+where note that $\nabla_0$ in the above notation is actually a time derivative, and not a spatial derivative.
+The velocities are defined unconventionally, as the time derivative $t$ of the original coordinates $\bm{r}$ \textbf{but also of the new coordinates} $\bm{R}$. We have
+\begin{equation}\label{eq:velocity_def}
+\begin{split}
+   v_i =  & \partial_t r_i = \partial_J f_i \partial_t R_J  \ ,\\
+   \bm{v} & = \left(\nabla_{\bm{R}} \bm{f}\right) \cdot \partial_t\bm{R} \ ,
+\end{split}
+\end{equation}
+where it was explicitly stated that the derivative of the new coordinates $\bm{R}$ is taken \textbf{with respect to the original time coordinate} $t$. In this respect, while it is understood that $v_0=\partial_t t\equiv 1$, the term $\partial_t \tau$ does not have to take the value $1$ necessarily. For convenience, we shall denote $\partial_t\bm{R}\equiv\bm{V}$.
+
+To understand why this definition works, let us use the definition of the velocity field from the displacement field relative to a Lagrangian coordinate system. Denoting by $\mathcal{R}$ the set of spatial Lagrangian coordinates, and using the Lagrangian time similar to the Eulertian time $t$, we can write the displacement field as $\bm{u}\equiv \bm{r}\left(\mathcal{R},t\right)-\mathcal{R}$. Obviously the ``time'' displacement is zero as the two time-coordinates coincide. To define the velocity field properly, one takes a derivative of the displacement with respect to $t$, keeping $\mathcal{R}$ constant, which gives $\bm{v}\equiv\partial_t\bm{r}\left(\mathcal{R},t\right)$. To perform the same trick on our transformed coordinates, we have to use $\bm{u}\equiv \bm{f}\left(\bm{R}\left(\mathcal{R},t\right)\right)-\mathcal{R}$, where $\bm{R}$ is used to represent \textbf{both spatial and temporal} coordinates in our transformed coordinate system. Taking a time derivative with respect to the Lagrangian time $t$, we use the chain rule and find $\bm{v}\equiv\nabla_{\bm{R}}\bm{f}\cdot \partial_t \bm{R}$, similar to Eq.~\eqref{eq:velocity_def}.
+
+%Note that this definition is not the natural definition in the original coordinates, which would be
+%\begin{equation}\label{eq:velocities}
+%\begin{split}
+%   v_i  = \partial_0 r_i & = \partial_J f_i \left(\nabla f\right)^{-T}_{0K} \partial_K R_J \ ,  \\
+%    \bm{v} = \partial_t\bm{r} & = \left(\nabla_{\bm{R}} \bm{f}\right)\cdot \left(\nabla_{\bm{R}} \bm{R}\right)\cdot \left(\nabla_{\bm{R}} \bm{f}\right)^{-1}_{K0}
+%\end{split}
+%\end{equation}
+%where using a mixed notation is the most convenient here (as the time-derivative operator is given in terms of the transposed inverse of the gradient of $\bm{f}$). Here we used the chain-rule (i.e. the operator $\partial_J f_I$, or $\nabla_{\bm{R}} \bm{f}$ contracted with $\partial_t R_J$), combined with the time-derivative operator as obtained in Eq.~\eqref{eq:derivatives_generic} (i.e. $\left(\nabla_{\bm{R}} \bm{f}\right)^{-T}_{K0} \partial_K$). As noted above, we will use the definition Eq.~\eqref{eq:velocity_def}, and not Eq.~\eqref{eq:velocities}.
+
+The full time derivative operator $\tfrac{d}{dt}$ is now given by the contraction of $\bm{v}$ with the $\nabla_{\bm{r}}$ operator, and takes the form
+\begin{equation}\label{eq:full_time_derivative}
+  \begin{split}
+     \frac{d}{dt}=v_i\partial_i  & = V_J\partial_J f_i  \left(\nabla f\right)^{-T}_{iK} \partial_K\\
+     \bm{v} \cdot \nabla_{\bm{r}}  & = \bm{V}^{T} \cdot \left(\nabla_{\bm{R}} \bm{f}\right)^T \cdot  \left(\nabla_{\bm{R}} \bm{f}\right)^{-T} \cdot \nabla_{\bm{R}} \ .
+  \end{split}
+\end{equation}
+Where this expression could be simplified greatly. Consider the definition of an inverse of a generic matrix $\bm{A}$ as $\bm{A}^{-1} \bm{A} = \bm{1}$. Taking the transpose of this equation yields $\bm{A}^{T}\left(\bm{A}^{-1}\right)^{T}  = \bm{1}$. Thus the contraction $\left(\nabla_{\bm{R}} \bm{f}\right)^T \cdot  \left(\nabla_{\bm{R}} \bm{f}\right)^{-T}$ yields by definition $\bm{1}$, and the expression takes the form $V_K\partial_K$ or equivalently $\bm{V}\cdot \nabla_{\bm{R}}$, similar to the operator in the Eulerian frame.
+
+\subsection{Transformed stress field} \label{sse:T_stress}
+If we consider the transformed stress to be $\bm{\Sigma}\equiv \bm{T}^{-1}\bm{\sigma}\bm{T}^{-T}$, or in index notation $\Sigma_{IL}=T_{Ij}^{-1}\sigma_{jk}T_{kL}^{-T}$ as was used in previous documents, we can use the generic transformation above to obtain $\Sigma_{IL}=\left(\nabla_{\bm{R}}f\right)_{Ij}^{-1}\sigma_{jk}\left(\nabla_{\bm{R}}f\right)_{kL}^{-T}$, where the indexes $j,k$ are denoted in lower-case letters as these relate to $\bm{\sigma}$ which exists on the physical domain. Practically, for $j=0$ or $k=0$, $\sigma_{0\bullet} = 0$, as the stress is defined relative to spatial derivatives only. Thus we represent $\bm{\sigma}$ for this general derivation as
+ \begin{equation}\label{eq:sigma_explicit}
+   \bm{\sigma} = \left(\begin{array}{cc}
+                   0 & \ldots \\
+                   \vdots & \tilde{\bm{\sigma}}
+                 \end{array}\right) \ ,
+ \end{equation}
+ where $\tilde{\bm{\sigma}}$ is the regular Cauchy stress tensor (of size $d\times d$ where $d$ is the number of spatial dimensions only).
+
+ The form of $\bm{\Sigma}$ could be complicated. However, note that for transformations of the form $t\rightarrow\tau$, i.e. $f_t=\tau$, the inverse transformation matrix $\bm{T}^{-1}$ takes the form
+\begin{equation}\label{eq:inverse_T}
+   \bm{T}^{-1}=\left(\begin{array}{cc}
+                       1 & 0 \\
+                       \bm{g}_{\tau}\left(\nabla_{\bm{R}} \bm{f}\right) & \bm{g}_{\left(X,Y\right)}\left(\nabla_{\bm{R}} \bm{f}\right)
+                     \end{array}\right) \ ,
+\end{equation}
+ where $\bm{g}$ are expressions that may involve all derivatives of $\bm{f}$. The important property here is, that the top row consists of the entry $1$ at the time-time component, and all other components vanish.
+
+ Taking the Cauchy stress as appears in Eq.~\eqref{eq:sigma_explicit}, the inverted transformation expression in Eq.~\eqref{eq:inverse_T}, the transformed stress $\bm{\Sigma}$ takes a similar form to $\bm{\sigma}$, that is
+\begin{equation}\label{eq:Sigma_explicit}
+  \bm{\Sigma} = \left(\begin{array}{cc}
+                   0 & \ldots \\
+                   \vdots & \tilde{\bm{\Sigma}}
+                 \end{array}\right) \ .
+\end{equation}
+where $\tilde{\bm{\Sigma}}$ is derived by the multiplications $T_{Ij}^{-1}\sigma_{jk}T_{kL}^{-T}$. Considering this special type of transformations, we conclude that all indexes in both $\Sigma$ and in $\sigma$ are spacial only, and that any component involving a zero index will vanish.
+
+For our future convenience, we can also write the stress tensor $\bm{\sigma}$ in terms of $\bm{\Sigma}$, as $\bm{\sigma}=\bm{T} \bm{\Sigma} \bm{T}^T$.
+
+\subsection{Transformed equations} \label{sse:T_equations}
+With the above operators, one can construct any equation needed. One may consider momentum balance in its tensorial form $\rho_0 \left(\partial_t + v_x\partial_x +v_y\partial_y \right)\bm{v} = \nabla\cdot\bm{\sigma}$, where we used here the regular, spatial $\nabla$ operator (i.e. running over spatial indexes only). This equation takes the form
+\begin{equation}\label{eq:momentum_balance_new}
+  \rho_0 \left(\partial_\tau + V_X\partial_X +V_Y\partial_Y \right)\left(\left(\nabla_{\bm{R}} \bm{f}\right) \cdot \bm{V}\right) = \left(\nabla_{\bm{R}} \bm{f}\right)^{-T}\cdot \nabla_{\bm{R}}\cdot \bm{T} \bm{\Sigma} \bm{T}^T \ .
+\end{equation}
+where it was assumed that the material is incompressible (we took a constant $\rho_0$ field).
+
+To gain some insight, we should write the above equation for the time component $0$, and for any of the spatial components. By doing that, we already note that an additional equation was obtained (as a time-index equation did not exist in the Eulerian frame).
+
+The time component equation yields $0$ on both sides automatically if we assume $f_t=\tau$. The expression $\partial_\tau f_t=1$, and for all other derivatives yields $0$, and the velocity field is $V_\tau = 1$, and $V_X$ and $V_Y$ for the other components. Dotting the two vectors yields $1$ which yields $0$ after taking its derivative. The right hand-side vanishes for the $0$ component, as we know already that $\sigma_{0\bullet}$ is zero to begin with.
+
+The spatial equation for the $X$ component gives
+\begin{equation}\label{eq:momentum_balance_new_X}
+  \rho_0 \left(\partial_\tau + V_X\partial_X +V_Y\partial_Y \right)\left(\partial_\tau f_x + V_X \partial_X f_x + V_Y \partial_Y f_x \right) = \left(\nabla_{\bm{R}} f\right)^{-T}_{iJ}\partial_J \left(\left(\nabla_{\bm{R}} f\right)_{iK} \bm{\Sigma}_{KL} \left(\nabla_{\bm{R}} f\right)^T_{Lx}\right) \ .
+\end{equation}
+However, as we know that for the specific form of transformation $f_t=\tau$ any of $\sigma_{0\bullet}$ vanishes, we know that the index $I$ cannot be zero, and runs only over spatial indexes. Additionally, given the form presented in Eq.~\eqref{eq:Sigma_explicit}, we know that taking $K$ or $L$ to zero would also cause the expression to vanish. To summarize, in the expression above the indexes $i,K,L$ run over only spatial indexes (running over the time index would give zero), and the index $J$ runs over all indexes. A similar equation is obtained for the $Y$ component, and is reproduced below for our future convenience.
+\begin{equation}\label{eq:momentum_balance_new_Y}
+  \rho_0 \left(\partial_\tau + V_X\partial_X +V_Y\partial_Y \right)\left(\partial_\tau f_y + V_X \partial_X f_y + V_Y \partial_Y f_y \right) = \left(\nabla_{\bm{R}} f\right)^{-T}_{iJ}\partial_J \left(\left(\nabla_{\bm{R}} f\right)_{iK} \bm{\Sigma}_{KL} \left(\nabla_{\bm{R}} f\right)^T_{Ly}\right) \ .
+\end{equation}
+
+To verify that our equations are not complete non-sense, we can perform a trivial check that indeed the equations derived give the correct form of moemntum balance when the identity transformation is used. Taking $f_t = \tau$, $f_x = X$, and $f_y = Y$, Eqs.~\eqref{eq:momentum_balance_new_X}-\eqref{eq:momentum_balance_new_Y} give
+\begin{equation}\label{eq:reduced_momentum}
+  \begin{split}
+     \rho_0 \left(\partial_\tau + V_X\partial_X +V_Y\partial_Y \right)V_X & = \partial_J \bm{\Sigma}_{JX} \ , \\
+     \rho_0 \left(\partial_\tau + V_X\partial_X +V_Y\partial_Y \right)V_Y  &= \partial_J \bm{\Sigma}_{JY} \ ,
+  \end{split}
+\end{equation}
+which is identical to the untransformed form of the momentum balance equation, as expected.
+
+We also have to derive the equivalent of the deformation-rate decomposition. Recall that
+\begin{equation}\label{eq:stress_rate}
+  \frac{\mathcal{D} \bm{\sigma}}{\mathcal{D} t} = \bm{C}:\left(\bm{D}-\bm{D}^{pl}\right) \ ,
+\end{equation}
+where $\bm{C}$ is a rank-four tensor, containing the elastic modulii of the material, and $\bm{D}$ is the total strain-rate. $\bm{D}^{pl}$ contains the dissipative strain absorbed by irreversible motion, and described by the constitutive relation to be discussed elsewhere. We have to transform this equation to the transformed domain. This means we have to obtain an expression for both the both the Jaumann/Truesdall derivatives of the transformed stress $\bm{\Sigma}$, and the write the strain tensor $\bm{D}$ in terms of the transformed fields. Transforming the strain-rate tensor is actually the easier task here. We start by writing the strain-rate tensor as $\bm{D}\equiv\frac{1}{2}\left[\nabla v + \left(\nabla v\right)^{T}\right]$.
+
+We aim to tackle the Truesdell stress-rate expression. Usually, the time evolution for $\bm{\sigma}$ with the Truesdell rate takes the form
+\begin{equation}\label{eq:Truesdell_original}
+   \frac{\mathcal{D} \bm{\sigma}}{\mathcal{D} t} = \dot{\bm{\sigma}} - \bm{l}\cdot\bm{\sigma}-\bm{\sigma}\cdot\bm{l}^{T} + \text{tr}\left(\bm{l}\right)\bm{\sigma} = \bm{C}:\left(\bm{D} - \bm{D}^{pl}\right)\ .
+\end{equation}
+We would like to re-write the expression Eq.~\eqref{eq:Truesdell_original} in terms of the transformed coordinate system. To do that, recall that $\bm{\sigma}\equiv \bm{T}\bm{\Sigma}\bm{T}^{T}$ and that velocity gradient $\bm{l}\equiv\nabla \bm{v}\equiv \left(\nabla_{\bm{R}} \bm{f}\right)^{-T}_S\cdot \nabla_{\bm{R}} \left[\left( \nabla_{\bm{R}} \bm{f} \right) \bm{V}\right]\equiv \bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)$. I have denoted here $\bm{T}^{-T}_S$ by a subscript $S$ to ensure that only the spatial indexes are considered in taking the derivatives. Note that taking $\bm{v}$ to be the full four-vector does not change anything as the first component of $\bm{v}$ is a constant.
+
+Let us examine the above equation term by term. First the term $\dot{\bm{\sigma}}\equiv\bm{V}\cdot\nabla_{\bm{R}}\left({\bm{T}\bm{\Sigma}\bm{T}^{T}}\right)$, where the $\dot{\bullet}$ operator is as defined in Eq.\eqref{eq:full_time_derivative}, and discussed for our concrete purposes just above Eq.~\eqref{eq:velocity_concrete}. Next consider the terms $\bm{l}\cdot\bm{\sigma}$ and $\bm{\sigma}\cdot\bm{l}^{T}$. Consider first $\bm{l}\cdot\bm{\sigma}$, which takes the explicit form
+\begin{equation}\label{eq:l_dot_sigma}
+  \bm{l}\cdot\bm{\sigma}\equiv \bm{T}^{-T}_S \nabla_{\bm{R}} \bm{T V} \cdot \bm{T}\bm{\Sigma}\bm{T}^{T} \ .
+\end{equation}
+
+Eq.~\eqref{eq:Truesdell_original} could be rearranged to the following form
+\begin{equation}\label{eq:Truesdell_recast}
+   \frac{d\bm{\sigma}}{d t} = \bm{C}:\left(\bm{D} - \bm{D}^{pl}\right) + \bm{l}\cdot\bm{\sigma} + \bm{\sigma}\cdot\bm{l}^{T} - \text{tr}\left(\bm{l}\right)\bm{\sigma}\ .
+\end{equation}
+However, note that in our previous discussions, I have used the following expression instead
+\begin{equation}\label{eq:Truesdell_new}
+   \frac{d\bm{\sigma}}{d t} = \bm{C}:\left(\bm{D} - \bm{D}^{pl}\right) + \bm{\sigma}\cdot\bm{l} + \bm{l}^{T}\cdot\bm{\sigma} - \text{tr}\left(\bm{l}\right)\bm{\sigma}\ .
+\end{equation}
+We can now use the fact that $\bm{\sigma}\equiv \bm{T}\bm{\Sigma}\bm{T}^{T}$, and decompose the time derivative operator as $\dot{\bm{\sigma}}$ as $ \dot{\bm{T}}\bm{\Sigma}\bm{T}^{T} + \bm{T}\dot{\bm{\Sigma}}\bm{T}^{T} + \bm{T}\bm{\Sigma}\dot{\bm{T}}^{T}$. Using the transformed form of $\bm{\sigma}$ and $\bm{l}$, we can recast Eq.~\eqref{eq:Truesdell_new} as
+\begin{equation}\label{eq:Truesdell_transformed}
+  \bm{T}\dot{\bm{\Sigma}}\bm{T}^{T} = \left\{\begin{split}
+                                          & \bm{C}:\left(\bm{D} - \bm{D}^{pl}\right) \\
+                                          & + \bm{T}\bm{\Sigma}\bm{T}^{T}\cdot \bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right) + \left[\nabla_{\bm{R}}\left(\bm{T V}\right)\right]^{T}\bm{T}^{-1}_S\cdot \bm{T}\bm{\Sigma}\bm{T}^{T}  - \text{tr}\left(\bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)\right)\bm{T}\bm{\Sigma}\bm{T}^{T} \\
+                                           &  -\dot{\bm{T}}\bm{\Sigma}\bm{T}^{T} - \bm{T}\bm{\Sigma}\dot{\bm{T}}^{T}
+                                      \end{split}\right\} \ .
+\end{equation}
+Finally, we can now multiply both sides by $\bm{T}^{-1}$ and $\bm{T}^{-T}$ from left and right respectively, to obtain
+\begin{equation}\label{eq:Truesdell_final}
+  \dot{\bm{\Sigma}}= \left\{\begin{split}
+                                          & \bm{T}^{-1}\left[\bm{C}:\left(\bm{D} - \bm{D}^{pl}\right)\right]\bm{T}^{-T} \\
+                                          & \bm{\Sigma}\bm{T}^{T}\bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)\bm{T}^{-T} + \bm{T}^{-1}\left[\nabla_{\bm{R}}\left(\bm{T V}\right)\right]^{T}\bm{T}^{-1}_S\bm{T}\bm{\Sigma}  - \text{tr}\left(\bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)\right)\bm{\Sigma} \\
+                                           &  -\bm{T}^{-1}\dot{\bm{T}}\bm{\Sigma} - \bm{\Sigma}\dot{\bm{T}}^{T}\bm{T}^{-T}
+                                      \end{split}\right\} \ .
+\end{equation}
+Note the symmetries the various terms have here. Consider the last two terms for example, $\bm{T}^{-1}\dot{\bm{T}}\bm{\Sigma}$ and $\bm{\Sigma}\dot{\bm{T}}^{T}\bm{T}^{-T}$. If one transposes the first term $\left(\bm{T}^{-1}\dot{\bm{T}}\bm{\Sigma}\right)^T=\bm{\Sigma}^{T}\left(\bm{T}^{-1}\dot{\bm{T}}\right)^T=\bm{\Sigma}\dot{\bm{T}}^{T}\bm{T}^{-T}$ which is exactly the second term (I have used the fact that $\bm{\Sigma}$ is symmetric). By similar manipulations, one can show that $\left[\bm{\Sigma}\bm{T}^{T} \bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)\bm{T}^{-T}\right]^{T} = \bm{T}^{-1}\left[\nabla_{\bm{R}}\left(\bm{T V}\right)\right]^{T}\bm{T}^{-1}_S\bm{T}\bm{\Sigma}$. This nice symmetry of the equations first ensures that the math above is possibly correct. Second, it may helpful in terms of the code implication (in terms of memory usage and error avoidance).
+
+As a final note, consider Eq.107 in bar\_coords file. There the transformation $\bm{T}$ was considered to be only time-dependent. We can see that the expression above and that in Eq.107 are similar if one considers the full time-derivative operator acting on the transformation matrix $\dot{\bm{T}}$ simplifies to a time-component only (in the expression above the full time derivative is applied to $\bm{T}$). To see this even better, consider denoting $\bm{L}\equiv\bm{T}^{-T}_S \nabla_{\bm{R}}\left(\bm{T V}\right)$. Using this, we can recast Eq.~\eqref{eq:Truesdell_final} as
+\begin{equation}\label{eq:Truesdell_simple}
+  \dot{\bm{\Sigma}}= \bm{T}^{-1}\left(
+                                           \left[\bm{C}:\left(\bm{D} - \bm{D}^{pl}\right)\right]
+                                           + \bm{\sigma}\bm{L} + \bm{L}^{T}\bm{\sigma} - \text{tr}\left(\bm{L}\right)\bm{\sigma}
+                                             -\dot{\bm{T}}\bm{\Sigma}\bm{T}^{T} - \bm{T}\bm{\Sigma}\dot{\bm{T}}^{T}
+                                      \right)\bm{T}^{-T}  \ ,
+\end{equation}
+which takes a very similar form to Eq.107 (up to the advective term which is hidden in the full time-derivative operator in the above notation).
+\section*{ A note about dimensionality}
+For the formulation above to be completely handy, one should consider full 3D spatial dimensions, and the time domain as well. Then, one can reduce the above formulation to plane-stress or strain as needed. Hence, all vectors above should be 4-vectors, and all matrices should become 4X4 matrices.
+
+In what follows, we have assumed plane-strain. This implies that $V_Z$ actually vanishes by construction, and the stress in the $ZZ$ direction should be considered as well. In the symmetric tensile transformation below this was not elaborated, but in the section following it the derivation was made rigourously, indeed showing the two cases to be equivalent when the asymmetric part is taken out.
+\section{Symmetric tensile transformation} \label{se:sym_tensile}
+Up until this point, the discussion was relatively general, allowing us to obtain the generic form of the transformed equations. However, in order to make some progress from this point on, we may wish to focus on specific types of transformations that would be of our interest. The transformations we will explore are
+\begin{equation}\label{eq:transformations_sym_tensile}
+  \begin{split}
+     x &= L\left(\tau\right) X \ , \\
+     y &= W\left(X,\tau\right) Y \ , \\
+     t &= \tau \ ,
+  \end{split}
+\end{equation}
+where $\left(X,Y\right)\in\left[-1,1\right]^2$ (but could also be any symmetric domain), $L$ describes the length of the material in time, and $W$ describes its width.
+
+To proceed from this point, it would be helpful to consider a set of Lagrangian coordinates $\mathcal{X},\mathcal{Y}$, denoted by $\mathcal{R}$ and Lagrangian time $t$ (similar to the Eulerian time). To define the Eulerian velocities $v_x$ and $v_y$, one first writes the displacements $u_x = x\left(\mathcal{R},t\right) - \mathcal{X}$, and $u_y = y\left(\mathcal{R},t\right) - \mathcal{Y}$. Then, taking a partial time derivative keeping the Lagrangian coordinates fixed, we have $v_x\equiv\left.\frac{\partial u_x}{\partial t}\right|_{\mathcal{R}} = \left.\frac{\partial x\left(\mathcal{R},t\right)}{\partial t}\right|_{\mathcal{R}}$, and similarly $v_y\equiv\left.\frac{\partial u_y}{\partial t}\right|_{\mathcal{R}} = \left.\frac{\partial y\left(\mathcal{R},t\right)}{\partial t}\right|_{\mathcal{R}}$.
+
+Similarly, we can repeat this procedure with the transformed coordinates. We define the displacements $U_X = L\left(t\right) X\left(\mathcal{R},t\right) - \mathcal{X}$, and $U_Y = W\left(X\left(\mathcal{R},t\right),t\right) Y\left(\mathcal{R},t\right) - \mathcal{Y}$, where we have traded $\tau$ for $t$ using the specific transformation Eq.~\eqref{eq:transformations_sym_tensile}. Note that the transformed coordinates $X,Y$ are not the Lagrangian coordinates $\mathcal{X},\mathcal{Y}$, as we allow these to evolve in time as well. Taking the same partial time-derivative as before, we have $v_x = \frac{\partial L}{\partial t} X\left(\mathcal{R},t\right) + L\left(t\right)\left.\frac{\partial X}{\partial t}\right|_{\mathcal{R}}\equiv \dot{L} X + L V_X$. Similarly, we have $v_y = \left.\frac{\partial W}{\partial t}\right|_{\mathcal{R}}Y\left(\mathcal{R},t\right) + \left.\frac{\partial W}{\partial X}\right|_{t} \left.\frac{\partial X}{\partial t}\right|_{\mathcal{R}} Y\left(\mathcal{R},t\right) + W\left(X\left(\mathcal{R},t\right),t\right) \left.\frac{\partial Y\left(\mathcal{R},t\right)}{\partial t}\right|_{\mathcal{R}}\equiv \dot{W} Y + W V_Y$, where $\dot{\bullet}\equiv \partial_t+V\cdot\nabla_{\bm{R}}$ in both cases (for $L$ it is a partial time derivative, and for $W$ it also has the $V_X$ component). To summarize, we have
+\begin{equation}\label{eq:velocity_sym_tensile}
+  \begin{split}
+     v_x & = \dot{L} X + L V_X \ ,\\
+     v_y & = \dot{W} Y + W V_Y \ .
+  \end{split}
+\end{equation}
+Finally, recall that in the momentum balance equation, the inertial hand-side reads $\rho \left(\partial_t + v\cdot\nabla\right)v$. We would like to have similar expressions in terms of $V$. Taking full time derivatives of Eq.~\eqref{eq:velocity_sym_tensile} we have
+\begin{equation}\label{eq:accel_sym_tensile}
+  \begin{split}
+     \left(\partial_t + v\cdot\nabla\right)v_x & = \ddot{L} X + L \dot{V}_X + 2 \dot{L} V_X \equiv \left(\partial_{\tau\tau}L\right) X + L\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_X + 2 V_X \partial_\tau L \ ,\\
+     \left(\partial_t + v\cdot\nabla\right)v_y & = \ddot{W} Y + W \dot{V}_Y + 2 \dot{W} V_Y \equiv \left[\begin{split}
+                                                       &  \left(\partial_{\tau\tau}W + 2 V_X\partial_{X,\tau}W + \partial_X W \partial_\tau V_X + V_X\partial_X\left(V_X\partial_X W\right)\right)Y \\
+                                                        & + W\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_Y + 2 V_Y \left(\partial_\tau W + V_X \partial_X W\right)
+                                                   \end{split}\right] \ ,
+  \end{split}
+\end{equation}
+where there is a non-trivial mixing between the spatial and temporal derivatives in the inertial term of the $y$ component. We have essentially wrote explicitly the inertial hand-side of the momentum balance equation.
+
+Consider the left and right boundaries first. We wish to impose elongation along these boundaries, i.e. set $v_x$ at the left and right boundaries. We also consider here the case of a clamped boundaries, namely $v_y = 0$ on these boundaries. Using Eq.~\eqref{eq:velocity_sym_tensile} we impose
+\begin{equation}\label{eq:velocity_x_bounds_sym_tensile}
+  \begin{split}
+     \pm v_0 & = \pm \dot{L} + L \left.V_X\right|_{X=\pm1} \ , \\
+      0 & = \left.\dot{W}\right|_{X=\pm1} Y + \left. W V_Y\right|_{X=\pm1} \ .
+  \end{split}
+\end{equation}
+Now, setting both $\left.V_X\right|_{\pm 1}=0$ and $\left.V_Y\right|_{\pm 1}=0$, these simplify to an explicit equation for $L=\int_0^\tau v_0 dt'$, and a constraint on $W\left(\pm1,\tau\right)=C$. Any velocity profile $v_0\left(\tau\right)$ could be picked, but assuming $v_0$ is simply a constant, the elongation is given by $L=L_0 + v_0 \tau$. Also, choosing no narrowing at the boundaries, we fix $W\left(\pm1,\tau\right)=W_0$ (note that $W_0$ is actually the width of the sample, as we demand that $Y$ remains within its domain at all times).
+
+Consider now the top and bottom boundaries --- we would like to impose a stress-free boundary condition there. In the Eulerian frame, this condition is obeyed when $\bm{\sigma}\cdot\hat{\bm{n}}=0$. To transform this to our transformed frame, we first would like to transform $\hat{\bm{n}}$ to $\hat{\bm{N}}$. Consider the top (bottom) boundaries - these could be depicted by vectors of the form $\left(x\left(X\right),\pm W\left(X,\tau\right)\right)^{T}\equiv\left(L X,\pm W\left(X,\tau\right)\right)^{T}$. Taking the $X$ derivative $\partial_X$ of this vector gives $\left(L,\pm \partial_X W\right)^{T}$, which is in the direction of the top and bottom surfaces. The normal vector to these surfaces is of the form $\left(\partial_X W, \mp L\right)$.
+
+Next we would like to transform the stress $\bm{\sigma}$ to $\bm{\Sigma}$. We use the transformation $\bm{\sigma}=\bm{T}\bm{\Sigma}\bm{T}^T$, where $\bm{T}=\nabla_{\bm{R}} \bm{f}$. In the case of Eq.~\eqref{eq:transformations_sym_tensile}, $\bm{T}$ takes the form
+\begin{equation}\label{eq:T_sym_tensile}
+  \bm{T} = \left(\begin{array}{ccc}
+             1 & 0 & 0 \\
+             X \partial_\tau L & L & 0 \\
+             Y \partial_\tau W & Y \partial_X W & W
+           \end{array}\right) \ .
+\end{equation}
+Now applying the transformation $\bm{\sigma}=\bm{T}\bm{\Sigma}\bm{T}^T$ and using $\bm{\sigma}\cdot\hat{\bm{n}} = 0$, we obtain
+\begin{equation}\label{eq:free_bounds_sym_tensile}
+  \begin{split}
+     \Sigma_{XY} W + (Y-1) \Sigma_{XX}\partial_X W& = 0 \ , \\
+     -\Sigma_{YY} W^2 + \left(1-2 Y\right)\Sigma_{XY} W \partial_X W + \left(1-Y\right)Y\Sigma_{XX}\left(\partial_X W\right)^2& = 0 \ ,
+  \end{split}
+\end{equation}
+for the top boundary. These could be solved to give
+\begin{equation}\label{eq:top_boundary_simple_1_sym_tensile}
+  \begin{split}
+     \Sigma_{YY} & = \left(\frac{\partial_X W}{W}\right)^2 \left(Y-1\right)^2 \Sigma_{XX} \ ,\\
+     \Sigma_{XY} & = -\frac{\partial_X W}{W}\left(Y-1\right)\Sigma_{XX} \ .
+  \end{split}
+\end{equation}
+The bottom boundary calculations are done in a similar fashion, and yield
+\begin{equation}\label{eq:bottom_boundary_simple_sym_tensile}
+  \begin{split}
+     \Sigma_{YY} & = \left(\frac{\partial_X W}{W}\right)^2 \left(Y+1\right)^2 \Sigma_{XX} \ ,\\
+     \Sigma_{XY} & = -\frac{\partial_X W}{W}\left(Y+1\right)\Sigma_{XX} \ .
+  \end{split}
+\end{equation}
+These two conditions are amazing for several reasons. First, note that at the top and bottom boundaries, i.e. when $Y=\pm1$ we have $\Sigma_{XY}=\Sigma_{YY}=0$, just as we expected. Secondly, note that if we take $W\left(X,t\right)\rightarrow W\left(t\right)$, the stresses $\Sigma_{XY}$ and $\Sigma_{YY}$ also vanish --- as the top surface is flat (as we have just shown that the stresses vanish anyhow, this is just a neat property, and as I see it does not have any practical advantages for us).
+
+Finally, let us try and derive the dynamic equations for $W$ at the top (and bottom) boundaries. To perform this magic trick, we have to transform the momentum balance equation, specifically its stress-part $\nabla_{\bm{r}}\cdot\bm{\sigma}$ to $\nabla_{\bm{R}}\cdot\bm{T}\bm{\Sigma}\bm{T}^{T}$, and equate the relevant parts to Eq.~\eqref{eq:accel_sym_tensile}. To do that, we first write the differential operators
+\begin{equation}\label{eq:derivatives_sym_tensile}
+% \nonumber % Remove numbering (before each equation)
+  \begin{split}
+  \partial_x &= \frac{\partial X}{\partial x}\partial_X + \frac{\partial Y}{\partial x}\partial_Y = L^{-1}\left(\partial_X - Y\frac{\partial_X W}{W} \partial_Y\right)  \ ,\\
+  \partial_y &= \frac{\partial Y}{\partial y}\partial_Y = W^{-1} \partial_Y \ , \\
+  \partial_{t} & = \frac{\partial X}{\partial t}\partial_X + \frac{\partial Y}{\partial t}\partial_Y + \frac{\partial \tau}{\partial t}\partial_\tau  = -X\frac{\partial_{\tau} L}{L} \partial_X -Y\left(\frac{\partial_{\tau} W}{W} - \frac{\partial_X W}{W}\frac{\partial_{\tau}L}{L}X\right)\partial_Y + \partial_{\tau} \ .
+    \end{split}
+\end{equation}
+For completion, the stress tensor $\bm{\sigma}$ written in terms of the transformed stress tensor $\Sigma$, takes the form
+\begin{equation}\label{eq:stress_transformed_sym_tensile}
+  \bm{\sigma} = \left(\begin{array}{cc}
+                  L^2 \Sigma_{XX} & L W \Sigma_{XY} + Y L \left(\partial_X W\right) \Sigma_{XX} \\
+                  L W \Sigma_{XY} + Y L \left(\partial_X W\right) \Sigma_{XX} & \Sigma_{YY} W^2 + 2 Y W \partial_X W \Sigma_{XY} +Y^2 \Sigma_{XX}\left(\partial_X W\right)^2
+                \end{array}\right)
+\end{equation}
+Now putting things together, writing $\nabla\cdot\bm{\sigma}=0$ in the transformed coordinates takes the form
+\begin{equation}\label{eq:div_stress_sym_tensile}
+  \begin{split}
+    L\left(\partial_X\Sigma_{XX} + \partial_Y\Sigma_{XY} + \frac{\partial_X W}{W} \Sigma_{XX}\right) & = 0 \ , \\
+    \left[\begin{split}
+      3 \Sigma_{XY} \partial_X W + \frac{Y \Sigma_{XX} \left(\left(\partial_X W\right)^2 + W \partial_{XX} W\right)}{W} \\
+      + Y \partial_X W \left(\partial_Y \Sigma_{XY} + \partial_X\Sigma_{XX}\right) + W \left(\partial_Y\Sigma_{YY} + \partial_X\Sigma_{XY}\right)\end{split}\right]  & = 0 \ .
+      \end{split}
+\end{equation}
+or an alternative form of
+\begin{equation}\label{eq:div_stress_boundary_sym_tensile_1}
+  \begin{split}
+    L\left(\partial_X\Sigma_{XX} + \partial_Y\Sigma_{XY} + \frac{\partial_X W}{W} \Sigma_{XX}\right) & = 0 \ , \\
+    \left[\begin{split}
+       Y\frac{\left(\partial_X W\right)^2}{W}\Sigma_{XX} + Y \partial_X \left(\left(\partial_X W\right) \Sigma_{XX}\right) +  W\partial_Y\Sigma_{YY} &  \\
+       + \partial_X\left(\Sigma_{XY} W \right) + Y\left(\partial_X W\right)\left( \partial_Y \Sigma_{XY}\right) + 2 \left(\partial_X W\right)\Sigma_{XY}    &
+    \end{split}\right]  & = 0 \ .
+  \end{split}
+\end{equation}
+The first equation in Eq.~\eqref{eq:div_stress_sym_tensile} is already pretty simple. The second equation could be further simplified by noting that that on the top (and bottom) boundaries, we have seen that $\Sigma_{XY}=\Sigma_{YY}=0$. This also implies any $X$ derivative acting on these quantities should vanish (but not a $Y$ derivative).
+With this in mind, the second equation is simplified to
+\begin{equation}\label{eq:div_stress_sym_tensile_y}
+  Y\frac{\left(\partial_X W\right)^2}{W}\Sigma_{XX} + Y \partial_X \left(\left(\partial_X W\right) \Sigma_{XX}\right) +  W\partial_Y\Sigma_{YY} + Y\left(\partial_X W\right)\left( \partial_Y \Sigma_{XY}\right)  = 0 \ .
+\end{equation}
+Thus, the first equation in Eq.~\eqref{eq:div_stress_sym_tensile} should be solved together with Eq.~\eqref{eq:div_stress_sym_tensile_y} (on both the top $Y=1$ and bottom $Y=-1$ bottom). Note that all terms in this equation are anti-symmetric (which should be another positive sign for us).
+
+Considering the dynamic case (i.e. having $\rho\left(\partial_t + \bm{v}\cdot\nabla\right)\bm{v}$ on the right hand side) simply means taking the above equations and using Eq.~\eqref{eq:accel_sym_tensile} instead of the $0$. This would require the boundary conditions of $V_X$ and $V_Y$ on the top and bottom boundaries. Assuming both $V_X = V_Y = 0$ on both boundaries, we end up with
+\begin{equation}\label{eq:div_stress_sym_tensile_dynamics}
+  \begin{split}
+     L\left(\partial_X\Sigma_{XX} + \partial_Y\Sigma_{XY} + \frac{\partial_X W}{W} \Sigma_{XX}\right) & = X \partial_{\tau\tau} L \ , \\
+      Y\frac{\left(\partial_X W\right)^2}{W}\Sigma_{XX} + Y \partial_X \left(\left(\partial_X W\right) \Sigma_{XX}\right) +  W\partial_Y\Sigma_{YY} + Y\left(\partial_X W\right)\left( \partial_Y \Sigma_{XY}\right) & = Y \partial_{\tau\tau} W \ .
+  \end{split}
+\end{equation}
+One can isolate $\partial_X \Sigma_{XX}$ from the top equation and substitute it into the bottom equation. Doing that, we have
+\begin{equation}\label{eq:div_stress_sym_tensile_combined}
+  X Y\frac{\partial_{\tau \tau} L}{L}\partial_X W + Y\Sigma_{XX}\partial_{XX}W + W\partial_Y \Sigma_{YY} = Y\partial_{\tau\tau}W \ .
+\end{equation}
+Plugging in this expression $Y=\pm1$ gives a wave equation for the profile $W$.
+
+To transform these equations to the more general case in which one does not enforce zero velocities at the top and bottom, all that has to be done is to use Eq.~\eqref{eq:accel_sym_tensile} instead of the above right hand side. Note that the left hand side $\nabla_{\bm{r}}\cdot\bm{\sigma}$ did not change in this process. One then obtains
+\begin{equation}\label{eq:div_stress_sym_tensile_dynamics_V}
+  \begin{split}
+     L\left(\partial_X\Sigma_{XX} + \partial_Y\Sigma_{XY} + \frac{\partial_X W}{W} \Sigma_{XX}\right) & = \left(\partial_{\tau\tau}L\right) X + L\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_X + 2 V_X \partial_\tau L  \ , \\
+      \left[\begin{split}&Y\frac{\left(\partial_X W\right)^2}{W}\Sigma_{XX} + Y \partial_X \left(\left(\partial_X W\right) \Sigma_{XX}\right) \\ & +  W\partial_Y\Sigma_{YY} + Y\left(\partial_X W\right)\left( \partial_Y \Sigma_{XY}\right) \end{split}\right] & = \left[\begin{split}
+                                                       &  \left(\partial_{\tau\tau}W + 2 V_X\partial_{X,\tau}W + \partial_X W \partial_\tau V_X + V_X\partial_X\left(V_X\partial_X W\right)\right)Y \\
+                                                        & + W\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_Y + 2 V_Y \left(\partial_\tau W + V_X \partial_X W\right)
+                                                   \end{split}\right] \ .
+  \end{split}
+\end{equation}
+
+Performing the same trick as before (i.e. isolating $\partial_X \Sigma_{XX}$ and substituting the result into the second equation)
+\begin{equation}\label{eq:div_stress_sym_tensile_combined_V}
+\left[\begin{split}
+         &X Y\frac{\partial_{\tau \tau} L}{L}\partial_X W + Y\Sigma_{XX}\partial_{XX}W + W\partial_Y \Sigma_{YY}  + \\
+          &Y \frac{\partial_X W}{L}\left[V_X\left(2\partial_{\tau}L + L \partial_X V_x\right) + L\left(V_Y \partial_Y V_X + \partial_\tau V_X\right)\right]
+      \end{split}\right] = \ddot{W} Y + W \dot{V}_Y + 2 \dot{W} V_Y\ ,
+\end{equation}
+where as expected, the added terms (second line on the left hand side) vanish if the velocity fields are assumed to vanish. Note that the right hand side was cast in such form for compactness, and does not change from the right hand side of Eq.\eqref{eq:div_stress_sym_tensile_dynamics_V}. Putting in $Y=\pm 1$ would give the evolution equation for $W$ on the top and bottom boundaries respectively.
+\subsection{Stress evolution}\label{sse:stress}
+Using Eq.~\eqref{eq:velocity_sym_tensile}, and the transformation of the differential operator Eq.~\eqref{eq:derivatives_sym_tensile}, we can easily transform the above equation. Below are the expressions obtained for the various combinations of $\partial_\bullet \star$, where $\bullet$ stands for $x,y$ and $\star$ stands for $v_x,v_y$.
+\begin{eqnarray}\label{eq:velocity_derivatives}
+% \nonumber % Remove numbering (before each equation)
+  \partial_x v_x &=& \frac{\dot{L}}{L}+\partial_{X}V_{X}-Y\frac{\partial_{X}W}{W}\partial_{Y}V_{X} \ , \\
+  \partial_y v_x &=& \frac{L}{W}\partial_Y V_X \ , \\
+  \partial_x v_y &=& \frac{1}{L}\left(Y\partial_{X}\dot{W}+V_{Y}\partial_{X}W+W\partial_{X}V_{Y}-Y\frac{\partial_{X}W}{W}\left(Y\partial_{Y}\dot{W}+\dot{W}+W\partial_{Y}V_{Y}\right)\right) \ , \\
+  \partial_y v_y &=& W^{-1}\left(Y\partial_{Y}\dot{W}+\dot{W}+W\partial_{Y}V_{Y}\right) \ ,
+\end{eqnarray}
+or explicitly
+\begin{eqnarray}\label{eq:velocity_derivatives_exp}
+% \nonumber % Remove numbering (before each equation)
+  \partial_x v_x &=& \frac{\partial_{\tau}L}{L}+\partial_{X}V_{X}-Y\frac{\partial_{X}W}{W}\partial_{Y}V_{X}\ , \\
+  \partial_y v_x &=& \frac{L}{W}\partial_Y V_X \ , \\
+  \partial_x v_y &=& \frac{1}{L}\left[\begin{split}Y\left(\partial_{\tau,X}W+\partial_{X}V_{X}\partial_{X}W+V_{X}\partial_{X,X}W\right)+V_{Y}\partial_{X}W+W\partial_{X}V_{Y}\\
+-Y\frac{\partial_{X}W}{W}\left(Y\partial_{Y}V_{X}\partial_{X}W+\left(\partial_{\tau}W+V_{X}\partial_{X}W\right)+W\partial_{Y}V_{Y}\right)
+\end{split}
+\right] \ , \\
+  \partial_y v_y &=& W^{-1}\left(\partial_{X}W\left(Y\partial_{Y}V_{X}+V_{X}\right)+\partial_{\tau}W+W\partial_{Y}V_{Y}\right)\ ,
+\end{eqnarray}
+where I am truly sorry about these expressions.
+
+With these expressions, we can first calculate $\bm{D}\equiv\frac{1}{2}\left[\nabla v + \left(\nabla v\right)^{T}\right]$, but also $\omega\equiv\frac{1}{2}\left[\nabla v - \left(\nabla v\right)^{T}\right]$, and $\bm{l}\equiv\nabla v$ (lower case was used here to avoid possible confusion with the length transformation factor $L$).
+
+
+\section{Asymmetric tensile transformation} \label{se:asym_tensile}
+As noted above, in Sec.~\ref{se:sym_tensile} we have restricted the transformation to be symmetric in $Y$. This restriction may actually prevent the emergence of shear-banding. Additionally, for our convenience we have used only 2D equations instead of the more general 3D formulation (with a reduction according to plane-strain or plane-stress).
+
+In this section we address both of these issues. First, we consider the more general transformation
+\begin{equation}\label{eq:transformations_asym_tensile}
+  \begin{split}
+     x &= L\left(\tau\right) X \ , \\
+     y &= W\left(X,\tau\right) Y + C\left(X,\tau\right)\ , \\
+     z &= Z \ , \\
+     t &= \tau \ ,
+  \end{split}
+\end{equation}
+and as noted, we will formulate all quantities in terms of the 3 spatial dimensions, instead of the above used 2 dimensions (it is assumed that $\left(X,Y,Z\right)\in\left[-1,1\right]^3$). Note that this does not mean that the above derivation was wrong, but rather that we will now show how the above equations are obtained from the full formulation (and when removing the possible asymmetric part). In this formulation, $C\left(\tau,X\right)$ describes the average coordinate transformation for $y$, and $W\left(X,\tau\right) Y$ adds a linear term to the $y$ coordinate.
+
+The velocities are obtained by
+\begin{equation}\label{eq:velocity_asym_tensile}
+  \begin{split}
+     v_x & = \dot{L} X + L V_X \ ,\\
+     v_y & = \dot{W} Y + W V_Y + \dot{C}\ , \\
+     v_z & = V_Z \ ,
+  \end{split}
+\end{equation}
+where note the added term in the $v_y$ velocity due to the new contribution, and the fact that the $z$ velocity remains similar in the transformed coordinates as well.
+
+The inertia terms for the momentum balance equations take the form
+\begin{equation}\label{eq:accel_sym_tensile}
+  \begin{split}
+     \left(\partial_t + v\cdot\nabla\right)v_x & = \ddot{L} X + L \dot{V}_X + 2 \dot{L} V_X \equiv \left(\partial_{\tau\tau}L\right) X + L\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_X + 2 V_X \partial_\tau L \ ,\\
+     \left(\partial_t + v\cdot\nabla\right)v_y & = \left[\begin{split}
+                                                       \ddot{W} Y +& W \dot{V}_Y + 2 \dot{W} V_Y \\
+                                                        & + \ddot{C}
+                                                   \end{split}\right]\equiv \left[\begin{split}
+                                                       &  \left(\partial_{\tau\tau}W + 2 V_X\partial_{X,\tau}W + \partial_X W \partial_\tau V_X + V_X\partial_X\left(V_X\partial_X W\right)\right)Y \\
+                                                        & + W\left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_Y + 2 V_Y \left(\partial_\tau W + V_X \partial_X W\right) \\
+                                                        & + \partial_{\tau\tau}C + 2 V_X\partial_{X,\tau}C + \partial_X C \partial_\tau V_X + V_X\partial_X\left(V_X\partial_X C\right)
+                                                   \end{split}\right] \ , \\
+    \left(\partial_t + v\cdot\nabla\right)v_z & = \dot{V_Z} \equiv \left(\partial_\tau + \bm{V}\cdot\nabla_{\bm{R}}\right)V_Z \ .
+  \end{split}
+\end{equation}
+where note the last line in the $v_y$ expression - obtained from the addition of $C\left(\tau,X\right)$ and the fact that the derivative in the $z$ direction takes the same form in the transformed and Eulerian coordinate systems.
+
+Consider again the left and right boundaries. Imposing clamped boundary conditions implies
+\begin{equation}\label{eq:velocity_x_bounds_asym_tensile}
+  \begin{split}
+     \pm v_0 & = \pm \dot{L} + L \left.V_X\right|_{X=\pm1} \ ,\\
+     0 & = \left.\dot{W}\right|_{X=\pm1} Y + \left. W V_Y\right|_{X=\pm1} + \left.\dot{C}\right|_{X=\pm1}\ , \\
+     0 & = \left.V_Z\right|_{X=\pm1} \ ,
+  \end{split}
+\end{equation}
+where again, this equation is completely equivalent to its counterpart Eq.~\eqref{eq:velocity_sym_tensile}
+
+\begin{equation}\label{eq:T_asym_tensile}
+  \bm{T} = \left(\begin{array}{cccc}
+             1 & 0 & 0 & 0\\
+             X \partial_\tau L & L & 0 & 0 \\
+             \partial_\tau C + Y \partial_\tau W & Y \partial_X W + \partial_X C & W & 0 \\
+             0 & 0 & 0 & 1
+           \end{array}\right) \ .
+\end{equation}
+Transforming the stress $\bm{\sigma} = \bm{T} \bm{\Sigma} \bm{T}^T$, and enforcing $\sigma_{xz}=\sigma_{yz}=0$, one obtains
+\begin{equation}\label{eq:stress_transformed_asym_tensile}
+  \begin{split}
+    \sigma_{xx} =& \Sigma_{XX} L^2 \ , \\
+  \sigma_{xy} =& \sigma_{yx} = L\left(\Sigma_{XY} W + \Sigma_{XX}\left(\partial_X C + Y\partial_X W\right)\right) \ , \\
+  \sigma_{yy} =& \Sigma_{YY}W^2 + 2\Sigma_{XY}W\left(\partial_X C + Y\partial_X W\right) + \Sigma_{XX}\left(\partial_X C + Y\partial_X W\right)^2 \ , \\
+  \sigma_{zz} =& \Sigma_{ZZ} \ ,
+  \end{split}
+\end{equation}
+where the time-like parts of the stress $\sigma_{\tau\bullet}$ vanish. Also note that we are getting a symmetric stress, as required.
+
+Now to the boundaries. Here the normal vector takes the form $\left(\partial_X\left(C\pm W\right), -L\right)$. Solving the top boundary equations yields equations similar to Eq.~\eqref{eq:top_boundary_simple_1_sym_tensile}-\eqref{eq:bottom_boundary_simple_sym_tensile}.
+
+Finally, the momentum balance equation takes the following form
+\begin{equation}\label{eq:div_stress_asym_tensile_dynamics_V}
+  \begin{split}
+     L\left(\partial_X\Sigma_{XX} + \partial_Y\Sigma_{XY} + \frac{\partial_X W}{W} \Sigma_{XX}\right) & = \ddot{L} X + L \dot{V}_X + 2 \dot{L} V_X \ , \\
+      \left[\begin{split}& 3 \Sigma_{XY}\partial_XW + \frac{\Sigma_{XX}\partial_X W \left(\partial_X C + Y \partial_X W\right)}{W}  \\
+      & + \Sigma_{XX}\left(\partial_{XX}C + Y\partial_{XX}W\right) + W\left(\partial_Y \Sigma_{YY} + \partial_X \Sigma_{XY}\right) \\
+       &+ \left(\partial_X C + Y \partial_X W\right)\left(\partial_Y\Sigma_{XY} + \partial_X \Sigma_{XX}\right)\end{split}\right] & = \left[\begin{split}\ddot{W} Y +& W \dot{V}_Y + 2 \dot{W} V_Y \\
+        & + \ddot{C}\end{split}\right] \ .
+  \end{split}
+\end{equation}
+The evolution equation for the $X$ component is completely unaffected by the fact that we added a mean transformation for the $Y$ coordinate. The $Y$ component is changed, however note that by taking $C\rightarrow0$ one recovers the left hand side of Eq.~\eqref{eq:div_stress_sym_tensile} --- as expected.
+
+To obtain the equations for the boundary evolution, one should set $\Sigma_{XY},\Sigma_{YY}=0$ at the top and bottom boundaries. As the $X$ component of the equation remains the same, one has only to substitute, giving
+\begin{equation}\label{eq:div_stress_asym_tensile_combined_V}
+\left[\begin{split}
+         &\frac{1}{L}\left(X \partial_{\tau\tau} L \left(\partial_X C + Y \partial_X W\right) + V_X \left(\partial_X C + Y \partial_X W \right) \left(2\partial_{\tau}L + L \partial_X V_X \right) \right) \\
+         &+ \Sigma_{XX}\left(\partial_{XX} C + Y \partial_{XX} W \right) + W \partial_Y\Sigma_{YY} +
+         \left(\partial_X C + Y \partial_X W\right) \left(V_Y \partial_Y V_X + \partial_{\tau} V_X\right)
+      \end{split}\right] = \left[\begin{split}\ddot{W} Y +& W \dot{V}_Y + 2 \dot{W} V_Y \\
+        & + \ddot{C}\end{split}\right]\ .
+\end{equation}
+Again, taking $C\rightarrow0$ one recovers Eq.~\eqref{eq:div_stress_sym_tensile_combined_V}. 
+
+Note here, that unlike the symmetric case, here the top and bottom equations are actually equations for $C$ and $W$. To see this clearly, one may denote $T\equiv C+W$ for the top boundary, and $B\equiv C-W$ for the bottom one. With these definitions in mind, one can recast the boundary equations derived from Eq.54 as
+\begin{equation}\label{eq:div_stress_asym_tensile_combined_V}
+\begin{split}
+&\left[\begin{split}
+         &\frac{1}{L}\left(X \partial_{\tau\tau} L \partial_X T+ V_X \partial_X T \left(2\partial_{\tau}L + L \partial_X V_X \right) \right) \\
+         &+ \Sigma_{XX} \partial_{XX} T + \frac{T-B}{2} \partial_Y\Sigma_{YY} +
+         \partial_X T  \left(V_Y \partial_Y V_X + \partial_{\tau} V_X\right)
+      \end{split}\right] = \ddot{T} + \frac{T-B}{2} \dot{V}_Y + \left(\dot{T}-\dot{B}\right) V_Y \ , \\
+    &\left[\begin{split}
+         &\frac{1}{L}\left(X \partial_{\tau\tau} L \partial_X B+ V_X \partial_X B \left(2\partial_{\tau}L + L \partial_X V_X \right) \right) \\
+         &+ \Sigma_{XX} \partial_{XX} B + \frac{T-B}{2} \partial_Y\Sigma_{YY} +
+         \partial_X B  \left(V_Y \partial_Y V_X + \partial_{\tau} V_X\right)
+      \end{split}\right] = \ddot{B} + \frac{T-B}{2} \dot{V}_Y + \left(\dot{T}-\dot{B}\right) V_Y \ ,  
+      \end{split}
+\end{equation}
+for the top and bottom respectively, where \textbf{note that for the $T$ equation, all fields are evaluated at the top boundary, and for the $B$ equation, all fields are evaluated at the bottom one}. Fields that have no dependence on $Y$, like $L$ would thus produce the same term. 
+
+These equations are a bit difficult to work with, due to the presence of $\partial_\tau V_X$. Instead, we can use the $V_X$ evolution equation in Eq.~\ref{eq:div_stress_asym_tensile_dynamics_V} to solve for this, and substitute it into the $V_Y$ equation. This will give us something we can solve directly. Performing this procedure in Mathematica, we arrive at:
+\begin{equation}
+    \frac{\Sigma_{XX}\frac{\p W}{\p X}\frac{\p T}{\p X}}{W} + \Sigma_{XX}\frac{\p^2 T}{\p X^2} + W\frac{\p \Sigma_{YY}}{\p Y} + \frac{\p T}{\p X}\left(\frac{\p \Sigma_{XY}}{\p Y} + \frac{\p \Sigma_{XX}}{\p X}\right) = \ddot{T}
+\end{equation}
+and
+\begin{equation}
+    \frac{\Sigma_{XX}\frac{\p W}{\p X}\frac{\p B}{\p X}}{W} + \Sigma_{XX}\frac{\p^2 B}{\p X^2} + W\frac{\p \Sigma_{YY}}{\p Y} + \frac{\p B}{\p X}\left(\frac{\p \Sigma_{XY}}{\p Y} + \frac{\p \Sigma_{XX}}{\p X}\right) = \ddot{B}
+\end{equation}
+where we have used that $V_Y$ and $\dot{V}_Y$ are zero on the top boundary, because otherwise a tracer particle in the transformed frame positioned on the top boundary would move into or out of the medium. 
+
+%This may hint us, that the term proportional to $\partial_{\tau\tau}L$ should be neglegibly small in comparison to the others --- considering only this term, the $B$ should increase (becoming less negative), and the $T$ term should decrease (becoming less positive) yielding an effective narrowing of the bar.
+
+Finally, one has to also provide the evolution equation for $\Sigma_{ZZ}$. This is obtained by $\nabla\cdot\bm{\sigma}=0$, and specifically the $zz$ component gives, $\partial_z \sigma_{zz} = 0$. This simply yields $\partial_Z \Sigma_{ZZ}=0$.
+
+We have thus shown that even the addition of a term to the transformation does not alter the dynamic equations by much. We also verify that in the limit of this additive transformation $C\rightarrow0$, we recover the previously obtained (in 2D) transformations.
+
+\section{Explicit Implementation}
+\subsection{Stress Evolution Equations}
+The simplest way to compute the stress update is to use matrix algebra to compute the untransformed stress update, modified by some time derivative of $T$ terms. To do this, we first note that only the spatial component of the transformation matters, except for proving that advection in the physical frame is advection in the transformed frame. This means that we can define
+\begin{equation}
+    \bsig = \bT_S \bSig \bT_S^T
+\end{equation}
+\begin{equation}
+    \nabla_{\bx} = \bT_S^{-T}\nabla_{\bX}
+\end{equation}
+where we have the matrices
+\begin{align}
+    \bT_S &= \begin{pmatrix} L & 0 & 0 \\ \frac{\p C}{\p X} + Y \frac{\p W}{\p X} & W & 0 \\ 0 & 0 & 1\end{pmatrix}\\
+    \bT_S^{-T} &= \begin{pmatrix} \frac{1}{L} & -\frac{\frac{\p C}{\p X} + Y \frac{\p W}{\p X}}{LW} & 0 \\ 0 & \frac{1}{W} & 0 \\ 0 & 0 & 1 \end{pmatrix}
+\end{align}
+The evolution equation for $\bSig$ is most simply written in a hybrid transformed-physical sense; for the purpose of a paper, we can tranform the physical quantities to entirely transformed quantities. However, this presentation is just more difficult to read and obfuscates what is really going on - when we implement, we multiply out all the matrices and effectively compute the physical terms.
+\begin{equation}
+    \dot{\bSig} = \bT_S^{-1}\left(\bC:\left(\bD - \bDpl\right) + \bl \bsig + \bsig \bl^T + Tr(\bl)\bsig - \dot{\bT}_S\bSig\bT_S^T - \bT_S \bSig \dot{\bT}_S^T\right)\bT_S^{-T}
+\end{equation}
+this equation involves a pesky $\dot{\bT}_S$ term. This can be written
+\begin{equation}
+    \dot{\bT}_S = \begin{pmatrix} \dot{L} & 0 & 0 \\ \dot{\overline{\frac{\p C}{\p X}}} + Y \dot{\overline{\frac{\p W}{\p X}}} + V_Y\frac{\p W}{\p X} & \dot{W} & 0 \\ 0 & 0 & 0\end{pmatrix}\\
+\end{equation}
+and we can write that
+\begin{equation}
+    \dot{\overline{\frac{\partial W}{\partial X}}} = \frac{\partial \dot{W}}{\partial X} - \frac{\partial V_X}{\partial X}\frac{\partial W}{\partial X}
+\end{equation}
+which is no problem as we track $\dot{T}$ and $\dot{B}$ and hence can compute $\dot{W}$ in the implementation. We also need to compute $\bl$,
+\begin{equation}
+    \bl = \bT_S^{-T}\Grad\bu
+\end{equation}
+and we have expressions for the physical velocities given by Eq.~\ref{eq:velocity_asym_tensile}, so they can be computed, we can compute their transformed derivatives, and we can stack that into a matrix and premultiply by $\bT_S^{-T}$ to compute $\bl$. All that remains is the $\bC:\left(\bD - \bDpl\right)$ term. We have that
+\begin{equation}
+    \bDpl = \Dpl \frac{\bsig_0}{\bar{s}}
+\end{equation}
+with $\bar{s} = \sqrt{.5\bsig_{0, ij}\bsig_{0, ij}}$. There is no simple expression for $\bsig_0$ in terms of transformed quantities (of course we can just transform $\bsig$ in the definition but it doesn't buy us much), so we simply will have to compute it directly. $\Dpl$ obviously does not change, as it is given by the STZ theory. We can, as always, write down that
+\begin{equation}
+    \bC:\bD = \lambda Tr(\bl) + \mu (\bl + \bl^T)
+\end{equation}
+which is probably the simplest way to implement this term, given that we will have already computed $\bl$. We also have, as usual
+\begin{equation}
+    \bC : \bsig_0 = 2\mu\left(\bsig - \frac{1}{3}Tr(\bsig)\bI\right) = 2\mu \bsig_0
+\end{equation}
+which again is probably the easiest way to implement.
+\subsection{Transformed Velocity Equations}
+The update for the $X$ component of the transformed velocity reads
+\begin{equation}
+    \frac{\p V_X}{\p t} = -\Adv V_X + \frac{\partial \SXX}{\p X} + \frac{\p \SXY}{\p Y} + \frac{\frac{\p W}{\p X}\SXX}{W} - \frac{\ddot{L}}{L}X - \frac{2\dot{L}}{L}V_X
+\end{equation}
+where $L$, $\dot{L}$, $\ddot{L}$ are known and specify the stretch imposed on the rightmost boundary. The update for the $Y$ component of velocity reads
+\begin{align}
+    \frac{\p V_Y}{\p t} &= -\Adv V_Y + \frac{1}{W}\left(3 \SXY\frac{\p W}{\p X} + \frac{\SXX \frac{\p W}{\p X}\left(\frac{\p C}{\p X} + Y\frac{\p W}{\p X}\right)}{W} + \SXX\left(\frac{\p^2 C}{\p X^2} + Y\frac{\p^2 W}{\p X^2}\right)\right.\nonumber\\ 
+    &\phantom{=} \left. + W\left(\frac{\p \SYY}{\p Y} + \frac{\p \SXY}{\p X}\right) + \left(\frac{\p C}{\p X} + Y \frac{\p W}{\p X}\right)\left(\frac{\p \SXY}{\p Y} + \frac{\p \SXX}{\p X}\right) - \left(\ddot{W}Y + \ddot{C}\right) - 2\dot{W}V_Y\right)
+\end{align}
+\subsection{Boundary Equations}
+We can of course rewrite the boundary equations for implementation as
+\begin{align}
+    \frac{\p T_1}{\p t} &= -\left(\bU \cdot \nabla_{\bX}\right)T_1 + T_2\\
+    \frac{\p T_2}{\p t} &= -\left(\bU \cdot \nabla_{\bX}\right)T_2 + \frac{\Sigma_{XX}\frac{\p W}{\p X}\frac{\p T_1}{\p X}}{W} + \Sigma_{XX}\frac{\p^2 T_1}{\p X^2} + W\frac{\p \Sigma_{YY}}{\p Y} + \frac{\p T_1}{\p X}\left(\frac{\p \Sigma_{XY}}{\p Y} + \frac{\p \Sigma_{XX}}{\p X}\right)
+\end{align}
+with an identical set of equations for $B_1, B_2$ by replacing $T \rightarrow B$.
+
+\end{document} 

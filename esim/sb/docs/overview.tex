@@ -1,0 +1,154 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath,amssymb,mathpazo,fullpage,microtype}
+
+\bibliographystyle{elsarticle-num}
+
+\usepackage{hyperref,color}
+\definecolor{webgreen}{rgb}{0,.35,0}
+\definecolor{webbrown}{rgb}{.6,0,0}
+\definecolor{RoyalBlue}{rgb}{0,0,0.9}
+
+\hypersetup{
+   colorlinks=true, linktocpage=true, pdfstartpage=3, pdfstartview=FitV,
+   breaklinks=true, pdfpagemode=UseNone, pageanchor=true, pdfpagemode=UseOutlines,
+   plainpages=false, bookmarksnumbered, bookmarksopen=true, bookmarksopenlevel=1,
+   hypertexnames=true, pdfhighlight=/O,
+   urlcolor=webbrown, linkcolor=RoyalBlue, citecolor=webgreen,
+   pdfauthor={},
+   pdftitle={Projection method problems},
+   pdfkeywords={},
+   pdfcreator={pdfLaTeX},
+   pdfproducer={LaTeX with hyperref}
+}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\p}{\partial}
+\newcommand{\vu}{\vec{u}}
+\newcommand{\vx}{\vec{x}}
+\newcommand{\vX}{\vec{X}}
+\newcommand{\vxi}{\boldsymbol\xi}
+
+\DeclareMathOperator{\CN}{cn}
+\DeclareMathOperator{\CD}{cd}
+\DeclareMathOperator{\SN}{sn}
+\DeclareMathOperator{\DN}{dn}
+\DeclareMathOperator{\atant}{atan2}
+
+\begin{document}
+\section*{Some projection method problems}
+\subsection*{Scaled coordinates for a stretching bar simulation}
+Eran and his student Avraham are planning to examine simulations of a bar being
+stretched using the STZ elastoplasticity model. They aim to look at a similar
+problem to a previous paper~\cite{rycroft12}, but this previous work had some
+severe limitations: it used made-up model parameters, and it also only employed
+an explicit numerical scheme. Consequently, the elasticity constants were very
+soft, and many orders of magnitude smaller than would be appropriate for
+modeling a metallic glass. It is now a good time to revisit this problem. The
+new projection method for elastoplasticity~\cite{rycroft15} allows us to solve
+the problem in the quasi-static limit, so that realistic elastic constants can
+be employed. We can look in much more detail at the interplay between the
+physical model and the bar geometry.
+
+For this problem, we work in the $xy$-plane and we consider a bar between two
+pairs of walls at $x=\pm W(t)$. The bar initially covers the region $|x|<W(0)$
+and $|y|<H$ where $H$ is a constant, and might have additional notches removed
+from it, in order to provide a location for plastic deformation to nucleate.
+Typically, the walls would move at constant velocity, so that $W(t)=W_0+Vt$ for
+some constant $V$. Usually, we consider $V>0$, corresponding to stretching.
+Initially, we plan to use a fixed rectangular grid for the simulation. While
+this works, it is not ideal for this problem, since as the wall moves, new
+layers of grid points have to be introduced. A possible rectification of this
+is to work using a scaled coordinate,
+\begin{equation}
+X= \frac{x}{W(t)}.
+\end{equation}
+With respect to this coordinate, the walls remain fixed at $X=\pm 1$,
+eliminating the need to continually expand the grid. One could also consider
+scaling the vertical coordinate, using
+\begin{equation}
+Y= f(t) y
+\end{equation}
+for some function $f(t)$. A natural choice would be to choose $f$ so that if
+the bar deformed purely elastically, then the bar height would remain fixed in
+$Y$ (\textit{i.e.} taking into account the thinning due to the Poisson ratio).
+
+This motivates an interesting question: \textbf{how can the explicit and
+quasi-static simulation procedures of the recent paper~\cite{rycroft15} be best
+adapted to this case?} There a number of possible considerations:
+\begin{enumerate}
+  \item What is the best way to represent velocity and stress? They could
+    just exactly match their values in the original physical coordinate
+    system, or they could be specified with respect to the scaled coordinate
+    system.
+  \item The recent paper~\cite{rycroft15} uses plane strain conditions. Here
+    we might also be interested in plane stress conditions, which would be
+    closer to an experimental test of this simulation. How does this change
+    things?
+  \item There are several boundary conditions of interest:
+    \begin{enumerate}
+      \item Pinning the bar to the wall, so that both components of velocity
+	match the wall.
+      \item Allowing the bar to slide up and down the wall. The horizontal
+	velocity should match the wall, and the shear stress should be zero.
+      \item Pulling on the bar with constant force.
+    \end{enumerate}
+\end{enumerate}
+
+\subsection*{Understanding the accuracy of a fluid projection method}
+One of the main outcomes of the recent paper~\cite{rycroft15} is that it
+establishes a link between the projection method of Chorin for the
+incompressible Navier--Stokes equations~\cite{chorin68}, and new class of
+problems in elastoplasticity. It therefore provides a bridge to allow
+more recent fluid simulation approaches to be translated across to
+elastoplasticity.
+
+A particularly good example is that by Yu \textit{et al.}~\cite{yu03,yu07} for
+simulating an inkjet. It has some very nice properties, such as an advanced
+method for handling advection, plus a finite-element (FE) projection step that
+could, in principle, be much better for handling complex boundaries.
+However, some of the method appears to be designed for high-Reynolds flows
+where advection dominates. A good starting point would therefore be \textbf{to
+examine, for a variety of different initial conditions, how different
+features of the method influence its accuracy and stability.} Specifically:
+\begin{enumerate}
+  \item Is the intermediate MAC projection step needed? Since the final
+    FE-based projection ensures that the velocity is divergence-free, it's not
+    clear that this is necessary. Does it improve accuracy?
+  \item There is a complicated initial procedure to calculate tangential
+    derivatives. When does this offer an advantage? Can it be removed in
+    some situations?
+\end{enumerate}
+There several ways to approach this:
+\begin{enumerate}
+  \item Consider a variety of different grid sizes and examine convergence
+    rates of the simulation as a function of $\Delta t$ and $\Delta x$. Use
+    different norms, such as $L_1$, $L_2$, and $L_\infty$. Compare the original
+    simulation to the variants and see how the comparison holds up as the
+    resolution is increased.
+  \item Try a range of different Reynolds numbers, since certain features of the
+    simulation method may only be advantageous in certain regimes.
+  \item In general, the incompressible Navier--Stokes equations do not have
+    closed-form solutions. However the method of manufactured solutions
+    provides one way to do this, whereby a body force $\vec{f}(\vec{x},t)$ is
+    introduced to induce a velocity field that has a closed form. A common
+    velocity field to consider is
+    \begin{equation}
+      \label{eq:vel}
+      \vu(\vx) = \left(
+      \begin{array}{c}
+	b\sin ax \cos by \sin ct \\
+	-a\cos ax \sin by \sin ct
+      \end{array}
+      \right),
+    \end{equation}
+    for some constants $a$, $b$, and $c$. This is incompressible.
+  \item Richardson extrapolation is another useful method for analysing
+    convergence rates. It makes it possible to say something by just having a
+    sequence of simulations at a finite grid sizes. Notes on this on the
+    \href{http://iacs-courses.seas.harvard.edu/courses/am205/}{AM205 website}
+    will be available shortly.
+\end{enumerate}
+
+\bibliography{elas}
+
+\end{document}

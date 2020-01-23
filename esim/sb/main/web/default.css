@@ -1,0 +1,35 @@
+body {
+	background: #fff;
+}
+
+h1 {
+	font: bold large Verdana, sans-serif;
+	color: #64d;
+}
+
+table {
+	padding:0;
+	margin:0;
+	border-collapse:collapse;
+	border: solid 2px #ccc;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+table tr th,
+table tr td {
+	white-space: nowrap;
+	padding: 3px;
+	margin: 0;
+	border: solid 2px #ccc;
+	text-align: center;
+	text-decoration: none;
+	vertical-align: middle;
+}
+table tr th {
+	font: bold small verdana, sans-serif;
+}
+
+table tr td {
+	font: normal small verdana, sans-serif;
+}

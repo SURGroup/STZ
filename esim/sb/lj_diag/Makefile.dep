@@ -1,0 +1,1 @@
+lj_sim.o: lj_sim.cc lj_sim.hh

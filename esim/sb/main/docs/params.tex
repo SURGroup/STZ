@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[landscape]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{cmbright}
+\usepackage{amsmath,amsfonts}
+\newcommand{\p}{\partial}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\sC}{\mathcal{C}}
+\newcommand{\sR}{\mathcal{R}}
+\newcommand{\sbar}{\bar{s}}
+\begin{document}
+\[
+\sC(\sbar,T) = \frac{1}{2}(\sR(\sbar,T)+\sR(-\sbar,T))
+\]
+\[
+\sR(\pm \sbar,T) = \exp\left( - \frac{\Delta \pm \Omega \epsilon_0 \sbar}{k_B T} \right)
+\]
+
+\[
+\sC(\sbar,T) = \left\{
+\begin{array}{ll}
+  e^{-\Delta/k_B T} \cosh (\Omega \epsilon_0 \sbar/k_B T) & \qquad \text{for $\Omega \epsilon_0 \sbar < \Delta$} \\
+  \Omega \epsilon_0 \sbar / 2\Delta & \qquad \text{for $\Omega \epsilon_0 \sbar \ge \Delta$}
+\end{array}
+\right.
+\]
+
+\begin{center}
+\begin{tabular}{cc}
+\begin{tabular}{c|c}
+  Parameter & Value \\
+  \hline
+  Molecular vibration timescale $\tau_0$ & $10^{-13}$~s \\
+  Shear yield stress $s_y$ & 1~GPa \\
+  Youngs modulus $E$ & 101~GPa \\
+  Poisson ratio $\nu$ & 0.35 \\
+  Density $\rho_0$ & 6.125 g/cm$\strut^3$ \\
+  Notch radius $\varrho$ & 65 $\mu$m
+\end{tabular}
+&
+\begin{tabular}{c|c}
+  Parameter & Value \\
+  \hline
+  STZ formation energy $e_z$ & 1.8~eV \\
+  Steady state e. temp. $\chi_\infty$ & 900~K \\
+  Initial e. temp. $\chi_0$ & 600--680~K \\
+  Thermal temperature $T$ & 400~K \\
+  STZ activation volume $\Omega$ & 1000~\AA$\strut^3$ \\
+  Activation barrier $\Delta$ & 0.7~eV
+\end{tabular}
+\end{tabular}
+\end{center}
+%\[
+%\rho\left( \frac{\p \vec{u}}{\p t} + (\vec{u}\cdot \nabla)\vec{u} \right ) = \nabla \cdot \boldsymbol\sigma
+%\]
+\end{document}

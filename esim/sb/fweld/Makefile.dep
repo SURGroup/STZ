@@ -1,0 +1,8 @@
+common.o: common.cc common.hh
+qs_multi.o: qs_multi.cc qs_multi.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh shear_sim.hh fields.hh \
+ stz_model.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh \
+ ../../tgmg/tgmg.cc ../../tgmg/tgmg.hh
+shear_sim.o: shear_sim.cc common.hh shear_sim.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh fields.hh stz_model.hh \
+ qs_multi.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh

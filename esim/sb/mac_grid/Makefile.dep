@@ -1,0 +1,2 @@
+common.o: common.cc common.hh
+mac_sim.o: mac_sim.cc common.hh mac_sim.hh fields.hh

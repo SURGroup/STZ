@@ -1,0 +1,420 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,hyperref,amsmath,amsfonts,color,microtype}
+\bibliographystyle{amsplain}
+
+\newcommand{\p}{\partial}
+\newcommand{\mgphi}{|\nabla \phi|}
+\newcommand{\GPa}{\textrm{~GPa}}
+\newcommand{\MPa}{\textrm{~MPa}}
+\newcommand{\um}{\textrm{~$\mu$m}}
+\newcommand{\drt}[1]{\frac{d #1}{d t}}
+\newcommand{\prx}[1]{\frac{\p #1}{\p x}}
+\newcommand{\pry}[1]{\frac{\p #1}{\p y}}
+\newcommand{\Dpl}{D^\textrm{pl}}
+\newcommand{\tT}{\tilde{t}}
+\newcommand{\xT}{\tilde{x}}
+\newcommand{\yT}{\tilde{y}}
+\newcommand{\rT}{\tilde{r}}
+\newcommand{\uT}{\tilde{u}}
+\newcommand{\vT}{\tilde{v}}
+\newcommand{\KT}{\tilde{K}}
+\newcommand{\pT}{\tilde{p}}
+\newcommand{\sT}{\tilde{s}}
+\newcommand{\qT}{\tilde{q}}
+\newcommand{\tauT}{\tilde{\tau}}
+\newcommand{\muT}{\tilde{\mu}}
+\newcommand{\drtT}[1]{\frac{d #1}{d \tT}}
+\newcommand{\prxT}[1]{\frac{\p #1}{\p \xT}}
+\newcommand{\pryT}[1]{\frac{\p #1}{\p \yT}}
+\newcommand{\QT}{\tilde{Q}}
+\newcommand{\sY}{s_Y}
+\newcommand{\Kfac}{K_I^*}
+\newcommand{\sC}{\mathcal{C}}
+\newcommand{\bs}{\bar{s}}
+\newcommand{\scT}{\mathcal{T}}
+\newcommand{\mub}{\bar{\mu}}
+\newcommand{\TK}{\textrm{~K}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\vus}{\vec{u}_*}
+
+\definecolor{Blue}{rgb}{0.12,0.05,0.9}
+\newcommand{\q}[1]{\textcolor{Blue}{#1}}
+
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arctanh}{arctanh}
+
+\begin{document}
+\section*{Simulations of a crack tip using the thermal STZ model}
+We aim to make use of the thermal version of the STZ model described by
+Langer~\cite{langer08} to investigate crack formation. The parameters in the
+model are chosen to closely match Vitreloy 1
+($\textrm{Zr}_{41}\textrm{Ti}_{14}\textrm{Cu}_{12.5}\textrm{Ni}_{10}\textrm{Be}_{22.5}$).
+
+\subsection*{Governing equations and scaling}
+We consider a plane strain formulation in the $x$ and $y$ coordinates, but make
+use of a full three-dimensional stress tensor given by
+\[
+\sigma = \left(
+\begin{array}{ccc}
+  -p + s -q & \tau & 0 \\
+  \tau & -p-s-q & 0 \\
+  0 & 0 & -p + 2q \\
+\end{array}
+\right).
+\]
+Here, $p$ is the pressure, $s$ and $\tau$ are the components of deviatoric
+stress within the $xy$ plane, and $q$ is the component of deviatoric stress in
+the $z$ direction out of the plane. The magnitude of the deviatoric stress
+tensor is $\bar{s}=\sqrt{s^2+\tau^2+3q^2}$. We make use of a system of linear
+elastoplasticity given by
+\begin{eqnarray}
+  \label{eq:sys_start} \rho_0 \drt{u}&=&-\prx{p}-\prx{q}+\prx{s}+\pry{\tau} \\
+  \rho_0 \drt{v}&=&-\pry{p}-\pry{q}-\pry{s}+\prx{\tau} \\
+  \drt{p} &=& -K \left(\prx{u} +\pry{v}\right) \\
+  \drt{q} &=& -\frac{\mu}{3} \left(\prx{u} + \pry{v}\right) -\frac{2\mu q \Dpl}{\bar{s}}\\
+  \drt{s} &=& 2\omega \tau + \mu\left( \prx{u} - \pry{v} \right) - \frac{2\mu s \Dpl}{\bar{s}} \\
+  \label{eq:sys_end} \drt{\tau} &=& - 2\omega s + \mu \left( \pry{u} + \prx{v} \right) - \frac{2\mu \tau \Dpl}{\bar{s}}
+\end{eqnarray}
+where $u$ and $v$ are the horizontal and vertical components of velocity,
+and the angular velocity is $\omega= (\p v /\p x - \p u / \p y)/2$. $K$ and
+$\mu$ are the elastic constants and $\rho_0$ is the density of the material.
+The simulation makes use of rescaled dimensionless units. The stress parameters
+are rescaled in terms of the yield stress $\sY$, so that
+\[
+\pT=\frac{p}{\sY}, \qquad \qT = \frac{q}{\sY}, \qquad \sT = \frac{s}{\sY}, \qquad \tauT = \frac{\tau}{\sY}, \qquad \KT = \frac{K}{\sY}, \qquad \muT = \frac{\mu}{\sY}.
+\]
+Lengths are scaled according to the initial radius of curvature of the notch,
+$\varrho$. The simulation uses $-M<\tilde{x}<M$, $-M<\tilde{y}<M$ in the
+rescaled coordinates for some constant $M$. The transverse wave speed is
+\[
+c_s = \sqrt{\frac{\mu}{\rho_0}}.
+\]
+The rescaled time coordinate $\tT$ is then related to real time $t$ according
+to
+\[
+t = \frac{\varrho\tT}{c_s}. 
+\]
+The simulations make use of dimensionless velocities $\uT = u/c_s, \vT =
+v/c_s$. Using these scalings, Eqs.~\ref{eq:sys_start} to \ref{eq:sys_end} can
+be rewritten as
+\begin{eqnarray}
+  \muT \drtT{\uT}&=&-\prxT{\pT}-\prxT{\qT}+\prxT{\sT}+\pryT{\tauT} \\
+  \muT \drtT{\vT}&=&-\pryT{\pT}-\pryT{\qT}-\pryT{\sT}+\prxT{\tauT} \\
+  \drtT{\pT} &=& -\KT \left(\prxT{\uT} +\pryT{\vT}\right) \\
+  \drtT{\qT} &=& -\frac{\muT}{3} \left(\prxT{\uT} +\pryT{\vT}\right) - \mu \left(\frac{2\varrho \Dpl}{c_s}\right) \frac{\qT}{\tilde{\bs}} \\
+  \label{eq:res_s} \drtT{\sT} &=& 2\tilde{\omega} \tauT + \muT\left( \prxT{\uT} - \pryT{\vT} \right) - \muT \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\sT}{\tilde{\bs}} \\
+  \label{eq:res_tau} \drtT{\tauT} &=& - 2\tilde{\omega} \sT + \muT \left( \pryT{\uT} + \prxT{\vT} \right) - \muT \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\tauT}{\tilde{\bs}}.
+\end{eqnarray}
+
+\subsection*{Elastic constants}
+The material has a Young's modulus of $E=101\GPa$ and a Poisson ratio
+of $\nu=0.35$~\cite{wang04} which gives a bulk modulus of
+\[
+K=\frac{101\GPa}{3(1-2\times0.35)} = 114.1 \GPa
+\]
+and a shear modulus of
+\[
+\mu=\frac{101\GPa}{2(1+0.35)} = 37.4 \GPa.
+\]
+An appropriate density is $\rho_0=6.125\times10^3\textrm{ kg m}^{-3}$ and thus
+the transverse wave speed is given by
+\begin{eqnarray*}
+c^2_s &=& \frac{37.4\GPa}{6.125 \textrm{ kg m}^{-3}} \\
+c_s &=& 2.471 \times 10^3 \textrm{ m s}^{-1}.
+\end{eqnarray*}
+We make use of a yield stress of $\sY \approx s_0 = 1.1 \GPa$, and thus the
+rescaled simulation paramaters are
+\begin{eqnarray*}
+  \tilde{K}&=&\frac{K}{\sY} = 103.7 \\
+  \tilde{\mu}&=&\frac{\mu}{\sY} = 34.0.
+\end{eqnarray*}
+
+
+\subsection*{Plastic deformation using the STZ model}
+The amount of plastic deformation is given by 
+\begin{equation}
+  \label{eq:strainrate}
+  \Dpl = \frac{\epsilon_0}{\tau_0} \sC(s) e^{-1/\chi} [\scT(\bs) - M(\bs)]
+\end{equation}
+where
+\[
+M(\bs) = \frac{s_0}{2\bs} \left[1+\frac{\bs}{s_0}\scT(\bs) + \frac{\rho(T)}{2\sC(\bs)}\right]
+- \frac{s_0}{2\bs} \sqrt{\left[1+\frac{\bs}{s_0} \scT(\bs) + \frac{\rho(T)}{2\sC(\bs)}\right]^2 - 4 \frac{\bs}{s_0} \scT(\bs)}.
+\]
+To use this, we must compute $\scT(\bs)$, $\sC(\bs)$, and $\rho(T)$, by making
+use of the functional forms suggested by Langer:
+\begin{eqnarray*}
+  \scT(\bs) &=& \tanh \left[\frac{T_E}{T} \sinh (\bs/\mub) \right] \\
+  \sC(\bs) &=& \exp \left[ - \frac{T_E}{T} \cosh (\bs/\mub) \right] \cosh\left[\frac{T_E}{T} \sinh(\bs/\mub) \right] \left[ 1+\left(\frac{\bs}{s_1}\right) \right]^{n/2} \\
+  \rho(T) &=& \left\{
+  \begin{array}{ll}
+    e^{-\alpha(T)} & \qquad \textrm{for $T>T_0$} \\
+    0 & \qquad \textrm{for $T<T_0$}
+  \end{array}
+  \right. \\
+  \alpha(T) &=& \frac{T_1}{T-T_0} e^{-a(T-T_0)/(T_A - T_0)}.
+\end{eqnarray*}
+By comparison with Eqs.~\ref{eq:res_s} and \ref{eq:res_tau}, we see that
+many of the STZ parameters can be scaled out by introducing
+\begin{equation}
+  \label{eq:nu_intro}
+  \nu = \frac{2 \varrho \epsilon_0}{c_s \tau_0}.
+\end{equation}
+We also make use of the following equation of motion for the effective
+temperature:
+\begin{equation}
+  \label{eq:chi}
+  \tau_0 \tilde{c}_0 \frac{d\chi}{dt} = e^{-1/\chi} \Gamma(\bs) \chi \left[ 1 - \frac{\chi}{\chi_0} \right] + \kappa e^{-\beta/\chi} \rho(T) \chi \left[ 1 - \frac{T_Z\chi}{T}\right].
+\end{equation}
+To use this, we need the following additional relations:
+\begin{eqnarray*}
+\Gamma(\bs)&=& \frac{2 \sC[ \scT - M][(\bs/s_0) - \xi(M)] + M\xi(M) \rho(T)}{1-M\xi(M)} \\
+\xi(m) &=& \frac{1}{s_0} \scT^{-1}(m) = \frac{\mub}{\q{s_0}} \arcsinh\left[\frac{T}{T_E} \arctanh(m)\right]. \\
+\end{eqnarray*}
+The term shown in blue does not feature in Ref.~\cite{langer08} but appears
+necessary for dimensional consistency. If Eq.~\ref{eq:chi} is written in terms
+of the coordinate $\tilde{t}=c_s t / \varrho$, and we make use of
+$\tilde{c}_0=c_0/\epsilon_0\nu_z$, then
+\[
+\frac{d\chi}{d\tilde{t}} = \frac{\varrho \epsilon_0 \nu_z}{\tau_0 c_0 c_s}
+\left[e^{-1/\chi} \Gamma(\bs) \chi \left[ 1 - \frac{\chi}{\chi_0} \right] +
+\kappa e^{-\beta/\chi} \rho(T) \chi \left[ 1 - \frac{T_Z\chi}{T}\right]\right].
+\]
+Using Eq.~\ref{eq:nu_intro}, this can be written as
+\[
+\frac{d\chi}{d\tilde{t}} = \frac{\nu\nu_z}{2 c_0}
+\left[e^{-1/\chi} \Gamma(\bs) \chi \left[ 1 - \frac{\chi}{\chi_0} \right] +
+\kappa e^{-\beta/\chi} \rho(T) \chi \left[ 1 - \frac{T_Z\chi}{T}\right]\right].
+\]
+Currently, we make use of $\nu=10^9$, which is higher than previous simulation,
+but reflective of the fact the the effective temperatures considered are
+smaller, leading to a considerably smaller $\exp(-1/\chi)$ factor. We set
+$\nu_z=200$. There are a large number of other free parameters in this model.
+Within the simulation, the temperatures are stored using their values in
+Kelvin, making use of
+\[
+T_0 = 250 \TK, \quad T_A = 1000 \TK, \quad T_E = 3000\TK, \quad T_Z= 16000\TK, \quad T_1 = 31000\TK.
+\]
+The stress parameters are
+\[
+\mub=0.1\GPa, \quad s_0= 1.1\GPa, \quad s_1=1.0\GPa,
+\]
+and the remaining parameters are
+\[
+n=1, \quad a=3, \quad \beta =1, \quad \chi_0=0.06, \quad \kappa=0.5.
+\]
+
+\subsection*{Boundary conditions}
+An appropriate value for the fracture toughness is $\Kfac = 50 \MPa
+\sqrt{\textrm{m}}$. We use the Irwin crack tip solutions where the $K_I$ is
+slowly increased. We make use of
+\begin{equation}
+  \label{eq:rate}
+  K_I(t) = \Kfac \left(\lambda+\frac{\gamma c_s t}{\varrho}\right).
+\end{equation}
+where $\lambda$ and $\gamma$ are dimensionless. The boundary conditions for
+velocity from the Irwin crack tip solutions are
+\begin{eqnarray*}
+u(r,\theta,t) &=& Q(r,t) (1+\nu) [(2\kappa -1)\cos(\theta/2) - \cos(3\theta/2)] \\
+v(r,\theta,t) &=& Q(r,t) (1+\nu) [(2\kappa +1)\sin(\theta/2) - \sin(3\theta/2)]
+\end{eqnarray*}
+where
+\[
+Q(r,t) = \frac{1}{2E} \sqrt{\frac{r}{2\pi}} \frac{d}{dt} K_I(t)
+= \frac{\Kfac\gamma c_s}{2E\varrho} \sqrt{\frac{r}{2\pi}}.
+\]
+It is appropriate to introduce $\QT=Q/c_s$, and hence
+\begin{eqnarray*}
+  \QT(\rT,\tT) &=& \frac{\gamma}{\varrho} \frac{50 \MPa \sqrt{\textrm{m}}}{101 \GPa} \sqrt{\frac{\varrho\rT}{2\pi}} \\
+  &=& 4.95 \times 10^{-4} \, \gamma \sqrt{\frac{\rT}{2\pi}} \sqrt{\textrm{m}/\varrho}
+\end{eqnarray*}
+The cracking process can be investigated for different values of $\lambda$ and
+$\gamma$. From Eq.~\ref{eq:rate}, it can be seen that a value of
+$\gamma=1$ corresponds to a very large strain rate. Although we generally
+consider $\lambda=0$ initially, we can impose a stress field taken from the
+Irwin crack tip solutions in other cases. For $t=0$, we have
+\begin{eqnarray*}
+  \sigma_{xx}(r,\theta) &=& W(r) \cos(\theta/2)[1-\sin(\theta/2)\sin(3\theta/2)] \\
+  \sigma_{xy}(r,\theta) &=& W(r) \cos(\theta/2)[1+\sin(\theta/2)\sin(3\theta/2)] \\
+  \sigma_{yy}(r,\theta) &=& W(r) \sin(\theta/2) \cos(\theta/2) \cos(3\theta/2)
+\end{eqnarray*}
+where
+\[
+W(r) = \frac{K_I(0)}{\sqrt{2\pi r}} = \frac{\lambda\Kfac}{\sqrt{2\pi r}}.
+\]
+Introducing $\tilde{W}=W/\sY$, we obtain
+\[
+\tilde{W}(r) = 4.5\times 10^{-2} \, \frac{\lambda}{\sqrt{2\pi \tilde{r}}} \sqrt{ \textrm{m}/\varrho}
+\]
+This can be used to initialize the rescaled stresses $\tilde{p}$, $\tilde{s}$, and
+$\tilde{\tau}$ in simulation.
+
+So far, $\gamma$ has been set to $0.01$. Fracture occurs in the range $100<\tilde{t}<200$ which appears to be in approximate agreement with the fracture toughness.
+
+\subsection*{Void nucleation}
+Currently, voids are nucleated by scanning the pressure field at each timestep.
+If a gridpoint position $\vec{x}_v$ is found where the rescaled pressure
+$\tilde{p}(\vec{x}_v)$ is lower than a critical value $\tilde{p}_\textrm{cr}$,
+then a void is nucleated by constructing a new level set function
+$\phi_\textrm{new}(\vec{x})$ in terms of the old one $\phi_\textrm{old}$
+according to
+\[
+\phi_\textrm{new}(\vec{x}) = \min\{ \phi_\textrm{old}(\vec{x}), |\vec{x}-\vec{x}_v|-r_v\}.
+\]
+Here, $r_v$ is the size of the void, and typically, a value of 0.9 times the
+grid spacing is used. So far, values of $\tilde{p}_\textrm{cr}$ of -4.5 and -5.0
+have been used.
+
+\subsection*{Quasistatic limit}
+To mimic physically realistic strain rates, the dimensionless velocities $\uT$
+and $\vT$ must be small. One possible way to consider this would be with
+\begin{eqnarray*}
+\uT &=& \epsilon U \\
+\vT &=& \epsilon V \\
+\tT &=& T/\epsilon,
+\end{eqnarray*}
+and aiming that $U$, $V$, and $T$ become $O(1)$ quantities. The system of
+equations would then become 
+\begin{eqnarray}
+  \label{eq:eps_u} \muT \epsilon^2 \frac{dU}{dT}&=&-\prxT{\pT}-\prxT{\qT}+\prxT{\sT}+\pryT{\tauT} \\
+  \label{eq:eps_v} \muT \epsilon^2 \frac{dV}{dT}&=&-\pryT{\pT}-\pryT{\qT}-\pryT{\sT}+\prxT{\tauT} \\
+  \frac{d\pT}{dT} &=& -\KT \left(\prxT{U} +\pryT{V}\right) \\
+  \frac{d\qT}{dT} &=& - \frac{\muT}{3} \left(\prxT{U} +\pryT{V}\right) - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\qT}{\bs} \\
+  \frac{d\sT}{dT} &=& 2\Omega \tauT + \muT \left( \prxT{U} - \pryT{V} \right) - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\sT}{\bs} \\
+  \label{eq:eps_tau} \frac{d\tauT}{dT} &=& - 2\Omega \sT + \muT \left( \pryT{U} + \prxT{V} \right) - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl}{c_s}\right) \frac{\tauT}{\bs}.
+\end{eqnarray}
+where $\Omega= (\p V /\p x - \p U / \p y)/2$. The $\epsilon^{-1}$ factor on the
+$\Dpl$ term looks promising, since this can balance out the fact that this term
+is small. The $\epsilon^2$ terms in Eqs.~\ref{eq:eps_u} and~\ref{eq:eps_v}
+suggest that we may just want to solve
+\begin{eqnarray}
+  \label{eq:eps_u2} 0&=&-\prxT{\pT}-\prxT{\qT}+\prxT{\sT}+\pryT{\tauT} \\
+  \label{eq:eps_v2} 0&=&-\pryT{\pT}-\pryT{\qT}-\pryT{\sT}+\prxT{\tauT},
+\end{eqnarray}
+or perhaps, if we include a viscosity,
+\begin{eqnarray}
+  \label{eq:eps_u3} -\kappa \nabla^2 U &=&-\prxT{\pT}-\prxT{\qT}+\prxT{\sT}+\pryT{\tauT}\\
+  \label{eq:eps_v3} -\kappa \nabla^2 V &=&-\pryT{\pT}-\pryT{\qT}-\pryT{\sT}+\prxT{\tauT}.
+\end{eqnarray}
+With these equations, we have lost the ability to evolve $U$ and $V$
+explicitly. One possible method of solution is to use a predictor--corrector
+method, similar to the projection method for the incompressible Navier--Stokes
+equations~\cite{chorin68}. Suppose that we first do compute intermediate
+stresses~$\pT_*,\sT_*,\tauT_*$ by neglecting the strain rate terms, so that
+\begin{eqnarray}
+  \frac{\pT_*-\pT_n}{\Delta T} &=& -\vec{U}_n\cdot\nabla \pT_n \\
+  \frac{\qT_*-\qT_n}{\Delta T} &=& -\vec{U}_n\cdot\nabla \qT_n - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl_n}{c_s}\right) \frac{\qT_n}{\bs_n}\\  
+  \frac{\sT_*-\sT_n}{\Delta T} &=& -\vec{U}_n\cdot\nabla \sT_n + 2\Omega_n \tauT_n - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl_n}{c_s}\right) \frac{\sT_n}{\bs_n} \\
+  \frac{\tauT_*-\tauT_n}{\Delta T} &=& -\vec{U}_n\cdot\nabla \tauT_n - 2\Omega_n \sT_n - \frac{\muT}{\epsilon} \left(\frac{2 \varrho \Dpl_n}{c_s}\right) \frac{\tauT_n}{\bs_n}.
+\end{eqnarray}
+We can then write
+\begin{eqnarray}
+  \label{eq:proj_start} \frac{\pT_{n+1}-\pT_*}{\Delta T} &=& - \KT \left(\prxT{U} +\pryT{V}\right) \\
+  \frac{\qT_{n+1}-\qT_*}{\Delta T} &=& - \frac{\muT}{3} \left(\prxT{U} +\pryT{V}\right) \\
+  \frac{\sT_{n+1}-\sT_*}{\Delta T} &=& \muT \left( \prxT{U} - \pryT{V} \right)  \\
+  \label{eq:proj_end} \frac{\tauT_{n+1}-\tauT_*}{\Delta T} &=& \muT \left( \pryT{U} + \prxT{V} \right).
+\end{eqnarray}
+We now consider Eqs.~\ref{eq:eps_u3}~\&~\ref{eq:eps_v3}. We wish to enforce these
+constraints for the $(n+1)$th timestep. From Equation~\ref{eq:eps_u3},
+\begin{eqnarray*}
+  -\kappa \nabla^2 U_{n+1} &=& -\prxT{\pT_{n+1}}-\prxT{\qT_{n+1}}+\prxT{\sT_{n+1}}+\pryT{\tauT_{n+1}}\\
+  &=& -\prxT{\pT_*}-\prxT{\qT_*}+\prxT{\sT_*}+\pryT{\tauT_*} \\
+  &&+\Delta T \left( (\muT+\KT') \frac{\p^2 U_{n+1}}{\p x^2} + \muT \frac{\p^2 U_{n+1}}{\p y^2} + \KT' \frac{\p^2 V_{n+1}}{\p x \p y} \right)
+\end{eqnarray*}
+and from Equation~\ref{eq:eps_v3},
+\begin{eqnarray*}
+  -\kappa \nabla^2 V_{n+1} &=& -\pryT{\pT_{n+1}}-\pryT{\qT_{n+1}}-\pryT{\sT_{n+1}}+\prxT{\tauT_{n+1}}\\
+  &=& -\pryT{\pT_*}-\pryT{\qT_*}-\pryT{\sT_*}+\prxT{\tauT_*} \\
+  && +\Delta T \left( \muT \frac{\p^2 V_{n+1}}{\p x^2} + (\muT+\KT') \frac{\p^2 V_{n+1}}{\p y^2} + \KT' \frac{\p^2 U_{n+1}}{\p x \p y} \right).
+\end{eqnarray*}
+where $\KT'=\KT+\frac{\muT}{3}$. Hence we must solve the system of equations
+{\small\begin{eqnarray}
+  \label{eq:double_multi1} (\muT+\KT'+\kappa') \frac{\p^2 U_{n+1}}{\p x^2} + (\muT+\kappa') \frac{\p^2 U_{n+1}}{\p y^2} + \KT' \frac{\p^2 V_{n+1}}{\p x \p y} &=& \frac{1}{\Delta T} \left(\prxT{\pT_*}+\prxT{\qT_*}-\prxT{\sT_*}-\pryT{\tauT_*}\right) \\
+  \label{eq:double_multi2} (\muT+\kappa') \frac{\p^2 V_{n+1}}{\p x^2} + (\muT+\KT'+\kappa') \frac{\p^2 V_{n+1}}{\p y^2} + \KT' \frac{\p^2 U_{n+1}}{\p x \p y}&=& \frac{1}{\Delta T} \left( \pryT{\pT_*}+\pryT{\qT_*}+\pryT{\sT_*}-\prxT{\tauT_*} \right)
+\end{eqnarray}}
+where $\kappa'=\kappa/\Delta t$. This vector system of equations appears to be
+solvable by the usual iterative methods like Jacobi, Gauss--Seidel, and
+multigrid. Once this is solved, then we can use
+Eqs.~\ref{eq:proj_start}--\ref{eq:proj_end} to compute $\pT_{n+1}, \sT_{n+1},
+\tauT_{n+1}$.
+
+\subsection*{Quasistatic boundary conditions}
+To solve the coupled elliptic problem given in Eqs.~\ref{eq:double_multi1} \&
+\ref{eq:double_multi2}, boundary conditions for $U$ and $V$ must be applied. At
+the edges of the simulation region, we can make use of the Irwin crack tip
+solutions. However, at the edge of the crack tip, we need to find an analog of
+$\sigma \cdot \hat{\vec{n}}=\vec{0}$ that was used in the direct solve.
+
+To make progress, it is helpful to consider the projection method for the
+incompressible Navier--Stokes equations, where appropriate boundary conditions
+for $p$ must be found. In this method, one first finds an intermediate velocity
+$\vus$ according to
+\begin{equation}
+  \frac{\vus-\vec{u}_n}{\Delta t} = - (\vec{u}_n \cdot \nabla) \vec{u}_n + \nu \nabla^2 \vec{u}_n.
+\end{equation}
+The intermediate velocity may not satisfy the incompressibility constraint.
+The velocity at the next timestep is given by
+\begin{equation}
+  \label{eq:projm}
+  \vec{u}_{n+1}= \vus - \frac{\Delta t}{\rho} \nabla p_{n+1}.
+\end{equation}
+To make sure the velocity at $(n+1)$th timestep satisfies the incompressibility
+constraint, we must solve the elliptic equation
+\begin{equation}
+  \nabla^2 p_{n+1} = \frac{\rho}{\Delta t} \nabla \cdot \vus.
+\end{equation}
+To use this, appropriate boundary conditions for $p$ must be found. Near a
+wall, where one wishes to enforce $\vec{u}\cdot \hat{\vec{n}}=0$, a possible
+strategy is to first solve for the intermediate $\vus$ using a free boundary
+condition. Then, to enforce the boundary condition at the $(n+1)$th timestep,
+Eq.~\ref{eq:projm} implies that
+\begin{equation}
+\frac{\Delta t}{\rho} \hat{\vec{n}} \cdot (\nabla p_{n+1}) = \hat{\vec{n}} \cdot \vus.
+\end{equation}
+There appears to be an analog to the quasistatic elastoplastic system. Rather
+than enforce the stress boundary conditions during the computation of
+$\sigma^*$, we can use free boundary conditions instead. Then, when
+computing $U$ and $V$, enforcing $\sigma_{n+1} \cdot \hat{\vec{n}}=\vec{0}$
+gives boundary conditions via Eqs.~\ref{eq:proj_start}--\ref{eq:proj_end}.
+Specifically,
+\[
+  \frac{1}{\Delta t} \hat{\vec{n}} \cdot
+\left(
+\begin{array}{cc}
+  -\pT_*-\qT_* + \sT_* & \tauT_* \\
+  \tauT_* & -\pT_*-\qT_* -\sT_* \\
+\end{array}
+\right)
+\]
+\begin{equation}
+  =\hat{\vec{n}} \cdot
+\left(
+\begin{array}{cc}
+  -\KT'(U_x+V_y) - \muT(U_x-V_y) & -\muT(U_y+V_x) \\
+  -\muT(U_y+V_x) & -\KT'(U_x+V_y) +\muT(U_x-V_y) \\
+\end{array}
+\right).
+\end{equation}
+This will give two equations, which is precisely the number of boundary
+conditions required.
+
+Numerically, this appears feasible, although the implementation of the above
+conditions in the presence of a spatially varying $\hat{\vec{n}}$ may be
+tricky. It does appear to have some numerical advantages over the previous
+method. Up until now, during each iteration, the fields have been extrapolated
+multiple times: they are extrapolated before the explicit step for stress, and
+then extrapolated again before the elliptic solve. In the above method, using
+the free boundary conditions, it appears to be very natural to extrapolate only
+once at the very start of the iteration.
+
+Since the boundary conditions above involve derivatives, they could pose
+problems for free bodies, since there would be no way to set an overall
+constant. However, this would appear to be similiar to the projection method,
+where $p$ may only be determined up to a constant. Here, since we make use of
+the Irwin crack tip solutions for some of the boundaries, the overall constant
+will be constrained. For free bodies, conservation of momentum could be used
+to set the constant.
+
+\bibliography{bmg}
+
+\end{document}

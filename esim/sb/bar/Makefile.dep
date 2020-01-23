@@ -1,0 +1,51 @@
+common.o: common.cc common.hh
+qs_multi_bd.o: qs_multi_bd.cc bd_sim.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh fields.hh stz_model.hh \
+ qs_multi_bd.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh extrap.hh \
+ ../../levelset/level++.hh ../../levelset/heap.hh \
+ ../../levelset/config.hh ../../levelset/traverse.hh \
+ ../../levelset/helper.hh ../../levelset/levelset.hh \
+ ../../levelset/sorting.hh ../../levelset/built/leonardo.hh \
+ ../../levelset/built/bicubic2.cc ../../levelset/ex_standard.hh \
+ ../../levelset/eik.hh extra_force.hh ../../tgmg/tgmg.cc \
+ ../../tgmg/tgmg.hh
+bd_sim.o: bd_sim.cc common.hh bd_sim.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh fields.hh stz_model.hh \
+ qs_multi_bd.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh extrap.hh \
+ ../../levelset/level++.hh ../../levelset/heap.hh \
+ ../../levelset/config.hh ../../levelset/traverse.hh \
+ ../../levelset/helper.hh ../../levelset/levelset.hh \
+ ../../levelset/sorting.hh ../../levelset/built/leonardo.hh \
+ ../../levelset/built/bicubic2.cc ../../levelset/ex_standard.hh \
+ ../../levelset/eik.hh extra_force.hh
+bicubic_vel.o: bicubic_vel.cc bd_sim.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh fields.hh stz_model.hh \
+ qs_multi_bd.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh extrap.hh \
+ ../../levelset/level++.hh ../../levelset/heap.hh \
+ ../../levelset/config.hh ../../levelset/traverse.hh \
+ ../../levelset/helper.hh ../../levelset/levelset.hh \
+ ../../levelset/sorting.hh ../../levelset/built/leonardo.hh \
+ ../../levelset/built/bicubic2.cc ../../levelset/ex_standard.hh \
+ ../../levelset/eik.hh
+extra_force.o: extra_force.cc common.hh ../../shared/vec.hh \
+ extra_force.hh bd_sim.hh ../../shared/mat.hh ../../shared/vec.hh \
+ fields.hh stz_model.hh qs_multi_bd.hh ../../tgmg/tgmg.hh \
+ ../../tgmg/tgmg_config.hh extrap.hh ../../levelset/level++.hh \
+ ../../levelset/heap.hh ../../levelset/config.hh \
+ ../../levelset/traverse.hh ../../levelset/helper.hh \
+ ../../levelset/levelset.hh ../../levelset/sorting.hh \
+ ../../levelset/built/leonardo.hh ../../levelset/built/bicubic2.cc \
+ ../../levelset/ex_standard.hh ../../levelset/eik.hh
+extrap.o: extrap.cc extrap.hh fields.hh ../../levelset/level++.hh \
+ ../../levelset/heap.hh ../../levelset/config.hh \
+ ../../levelset/traverse.hh ../../levelset/helper.hh \
+ ../../levelset/levelset.hh ../../levelset/sorting.hh \
+ ../../levelset/built/leonardo.hh ../../levelset/built/bicubic2.cc \
+ ../../levelset/ex_standard.hh ../../levelset/eik.hh
+qs_multi.o: qs_multi.cc qs_multi.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh shear_sim.hh fields.hh \
+ stz_model.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh \
+ ../../tgmg/tgmg.cc ../../tgmg/tgmg.hh
+shear_sim.o: shear_sim.cc common.hh shear_sim.hh ../../shared/vec.hh \
+ ../../shared/mat.hh ../../shared/vec.hh fields.hh stz_model.hh \
+ qs_multi.hh ../../tgmg/tgmg.hh ../../tgmg/tgmg_config.hh
