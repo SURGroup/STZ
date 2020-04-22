@@ -965,27 +965,28 @@ void shear_sim::output(const char *prefix,const int mode,const int sn) {
     // field, so that the top boundary can be included. In the y-periodic case, there
     // is the same number of staggered and nonstaggered fields.
     int max_y = st? n : y_prd? n : n + 1;
+    double lt=lamb*time;
     for(j = 0; j < max_y; j++) {
 
         // First element in every row for binary matrix format is the y coordinate
         *buf = ay + (st? (j + 0.5)*dy : j*dy); bp = buf + 1;
         switch(mode) {
-            case  0: while(bp < be) *(bp++) = (fp++)->u;      break;
-            case  1: while(bp < be) *(bp++) = (fp++)->v;      break;
-            case  2: while(bp < be) *(bp++) = (fp++)->p;      break;
-            case  3: while(bp < be) *(bp++) = (fp++)->q;      break;
-            case  4: while(bp < be) *(bp++) = (fp++)->s;      break;
-            case  5: while(bp < be) *(bp++) = (fp++)->tau;    break;
-            case  6: while(bp < be) *(bp++) = (fp++)->chi;    break;
-            case  7: while(bp < be) *(bp++) = (fp++)->chi*TZ; break;
-            case  8: while(bp < be) *(bp++) = (fp++)->dev(lamb*time); break;
-            case  9: while(bp < be) *(bp++) = (fp++)->X;      break;
-            case 10: while(bp < be) *(bp++) = (fp++)->Y;      break;
-            case 11: while(bp < be) *(bp++) = (fp++)->cu;     break;
-            case 12: while(bp < be) *(bp++) = (fp++)->cv;     break;
-            case 13: while(bp < be) *(bp++) = (fp++)->cp;     break;
-            case 14: while(bp < be) *(bp++) = (fp++)->cq;     break;
-            case 15: while(bp < be) *(bp++) = (fp++)->cs;     break;
+            case  0: while(bp < be) *(bp++) = (fp++)->u;           break;
+            case  1: while(bp < be) *(bp++) = (fp++)->v;           break;
+            case  2: while(bp < be) *(bp++) = (fp++)->p_phys(lt);  break;
+            case  3: while(bp < be) *(bp++) = (fp++)->q_phys(lt);  break;
+            case  4: while(bp < be) *(bp++) = (fp++)->s_phys(lt);  break;
+            case  5: while(bp < be) *(bp++) = (fp++)->tau_phys(lt);break;
+            case  6: while(bp < be) *(bp++) = (fp++)->chi;         break;
+            case  7: while(bp < be) *(bp++) = (fp++)->chi*TZ;      break;
+            case  8: while(bp < be) *(bp++) = (fp++)->dev(lt);     break;
+            case  9: while(bp < be) *(bp++) = (fp++)->X;           break;
+            case 10: while(bp < be) *(bp++) = (fp++)->Y;           break;
+            case 11: while(bp < be) *(bp++) = (fp++)->cu;          break;
+            case 12: while(bp < be) *(bp++) = (fp++)->cv;          break;
+            case 13: while(bp < be) *(bp++) = (fp++)->cp;          break;
+            case 14: while(bp < be) *(bp++) = (fp++)->cq;          break;
+            case 15: while(bp < be) *(bp++) = (fp++)->cs;          break;
             case 16: while(bp < be) *(bp++) = (fp++)->ctau;
         }
 
@@ -1142,7 +1143,6 @@ double shear_sim::gaussian_normal_factor(double llinv,int cut) {
             vfac+=(k==0||k==j?4:8)*q2*q2;
         }
     }
-    printf("%g\n",vfac);
     return sqrt(vfac);
 }
 

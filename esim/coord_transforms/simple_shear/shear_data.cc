@@ -47,7 +47,7 @@ int main(int argc,char **argv) {
     // Output fields and miscellaneous flags. 1-u, 2-v, 4-p, 8-q, 16-s, 32-tau,
     // 64-chi, 128-tem, 256-dev, 512-X, 1024-Y, 2048-(total strain components),
     // 4096-(total strain invariants), 8192-(Lagrangian tracer output).
-    const unsigned int fflags=128|256|512|1024|4096;
+    const unsigned int fflags=128|256|512|1024|8192;
 
     // Elasticity related parameters (based on Vitreloy 1 BMG)
     const double E = 101e9;                 // Young's modulus (Pa)
@@ -88,11 +88,12 @@ int main(int argc,char **argv) {
     stz_dynamics_linear_athermal stz(TZ, c0, tau0, kappa, Delta, Omegaeps0, chi_inf, theta, 0);
 
     // Initialize the simulation
-    shear_sim sim(200, 100, -2, 2, -1, 1, mu, K, visc, chi_len, t_scale, adapt_fac, u_bdry, lamb, &stz, y_prd, fflags, qs? qfn : dfn);
+    shear_sim sim(128, 128, -1, 1, -1, 1, mu, K, visc, chi_len, t_scale, adapt_fac, u_bdry, lamb, &stz, y_prd, fflags, qs? qfn : dfn);
     sim.init_fields(0, 580, 220);
+    sim.initialize_tracers(64,64);
 
     // Open the input file and read in the grid dimensions and scaling
-    FILE *fp=safe_fopen(argv[2],"r");
+ /*   FILE *fp=safe_fopen(argv[2],"r");
     int mm,nn;
     double chi_base,chi_scale;
     if(fscanf(fp,"%d %d %lg %lg",&mm,&nn,&chi_base,&chi_scale)!=4) {
@@ -122,7 +123,10 @@ int main(int argc,char **argv) {
     sim.initialize_chi_bicubic(mm,nn,f,chi_base/TZ,chi_scale/TZ);
 
     // Free the dynamically allocated memory
-    delete [] f;
+    delete [] f;*/
+
+    // Initialize random chi field
+    sim.initialize_random(2,570,10);
 
     // Carry out the simulation using the selected simulation method
     qs?sim.solve_quasistatic(tf,120,5):sim.solve(tf,160);

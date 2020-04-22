@@ -106,35 +106,20 @@ struct c_field {
      * \param[in] lt the simple shear transformation amount.
      * \return The magnitude squared. */
     inline double devsq(double lt) {
-
-/*        Transformed Calculation
- *
- *
- *        double lt  = lt;
- *        double lt2 = lt*lt;
- *        double lt3 = lt*lt2;
- *        double lt4 = lt2*lt2;
- *
- *        double reg      = 3*q*q + s*s + tau*tau;
- *        double lt_term  = 2*lt*(p + 2*(q + s))*tau;
- *        double lt2_term = lt2*third*(3*p*p + 6*q*q + 6*q*s + 3*p*(3*q + s) + 4*tau*tau);
- *        double lt3_term = lt3*2*third*(p + q + s)*tau;
- *        double lt4_term = lt4*third*(p + q + s)*(p + q + s);
- *
- *        return reg + lt_term + lt2_term + lt3_term + lt4_term;
- *
- */
-
-        // First compute the untransformed coordinates.
-        double unt_tau = tau - lt*(p + q + s);
-        double unt_q   = q + lt*(1/3.)*(-tau + lt*.5*(p + q + s));
-        double unt_s   = s + lt*(tau - lt*.5*(p + q + s));
-
-        // Then calculate sbar using the untransformed coordinates.
-        return 3*unt_q*unt_q + unt_s*unt_s + unt_tau*unt_tau;
-
-        /* Old calculation */
-        //return (3*q*q+s*s+tau*tau);
+        double qp=q_phys(lt),sp=s_phys(lt),taup=tau_phys(lt);
+        return 3*qp*qp+sp*sp+taup*taup;
+    }
+    inline double p_phys(double lt) {
+        return p+lt*((-2/3.)*tau+(1/3.)*lt*(p+q+s));
+    }
+    inline double q_phys(double lt) {
+        return q+lt*(1/3.)*(-tau+lt*.5*(p+q+s));
+    }
+    inline double s_phys(double lt) {
+        return s+lt*(tau-lt*.5*(p+q+s));
+    }
+    inline double tau_phys(double lt) {
+        return tau-lt*(p+q+s);
     }
     /** Computes the magnitude of the deviatoric stress tensor, taking into
      * account the transformation of the grid.
