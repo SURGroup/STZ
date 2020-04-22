@@ -32,8 +32,8 @@ shear_sim::shear_sim(const int m_, const int n_, const double ax_, const double 
     dx(lx/m), dy(ly/n), xsp(1./dx), ysp(1./dy), mu(mu_), mu_inv(1./mu_), K(K_),
     viscosity(viscosity_), chi_len(chi_len_), t_scale(t_scale_), adapt_fac(adapt_fac_),
     u_bdry(u_bdry_), lamb(lamb_), stz(stz_), y_prd(y_prd_),
-    filename(filename_), fbase(new c_field[gmn]), fm(fbase+2*gm+2), time(0.),
-    f_num(0), qsm(*this), buf(new float[m>=63?m+6:64]) {
+    filename(filename_), fbase(new c_field[gmn]), fm(fbase+2*gm+2), tr(NULL),
+    time(0.), f_num(0), qsm(*this), buf(new float[m>=63?m+6:64]) {
 
     // Set STZ related parameters
     TZ=stz->TZ;
