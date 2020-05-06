@@ -175,12 +175,12 @@ int main(int argc,char **argv) {
     // Initialize the simulation
     shear_sim sim(x_grid,y_grid,x_beg/le,x_end/le,y_beg/le,y_end/le,mu,K,
                   visc,chi_len,t_scale,adapt_fac,u_bdry,lamb,&stz,y_prd,fflags,qs? qfn : dfn);
-    
-    //Case 0: Small Gaussian blip at the origin… 
+
+    //Case 0: Small Gaussian blip at the origin…
     //Case 1: Rotated line of higher chi
     //Case 2: Sequence of Gaussian Blips in sine wave pattern.
     sim.init_fields(0,rf_mean,rf_std);
-    
+
     // Open the input file and read in the grid dimensions and scaling
     //read_chi_from_file(argv[2],sim,u0,beta*Ez/kB_metal,TZ);
     sim.initialize_random(chi_len,rf_mean,rf_std); //780, 20

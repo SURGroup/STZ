@@ -31,15 +31,7 @@ int main(int argc,char **argv) {
 
     // STZ model parameters (based on Vitreloy 1 BMG)
     const double s_y = 0.85e9;              // Yield stress (Pa)
-    const double c0 = 0.4;
     const double tau0 = 1e-13;
-    const double kappa = 4.2;
-    const double Delta = 8000/TZ;
-    const double Omega = 300.*22/17;        // Fix typo in 2015 JCP
-    const double eps0 = 0.3;
-    const double chi_inf = 900/TZ;
-    const double theta = 400/TZ;
-    const double Omegaeps0 = Omega*1e-30*eps0*s_y/(TZ*kB);
 
     // Output filenames
     const char dfn[] = "sct_d.out", qfn[] = "sct_q.out";
@@ -85,7 +77,22 @@ int main(int argc,char **argv) {
     mkdir(qs? qfn : dfn, S_IRWXU|S_IRWXG|S_IROTH|S_IXOTH);
 
     // Initialize an STZ plasticity model
-    stz_dynamics_linear_athermal stz(TZ, c0, tau0, kappa, Delta, Omegaeps0, chi_inf, theta, 0);
+    // The Bouchbinder-Rycroft model from 2012 PRL, 2015 JCP, 2016 PRA papers.
+    /*const double c0 = 0.4;
+    const double kappa = 4.2;
+    const double Delta = 8000/TZ;
+    const double Omega = 300.*22/17;        // Fix typo in 2015 JCP
+    const double eps0 = 0.3;
+    const double chi_inf = 900/TZ;
+    const double theta = 400/TZ;
+    const double Omegaeps0 = Omega*1e-30*eps0*s_y/(TZ*kB);
+    stz_dynamics_linear_athermal stz(TZ, c0, tau0, kappa, Delta, Omegaeps0, chi_inf, theta, 0);*/
+
+    // The model from Hinkle et al. (PRE, 2017)
+	const double chi_inf=0.15;
+    const double ep=10;
+    const double c0=1;
+    stz_dynamics_adam stz(TZ,chi_inf,tau0,ep,c0);
 
     // Initialize the simulation
     shear_sim sim(128, 128, -1, 1, -1, 1, mu, K, visc, chi_len, t_scale, adapt_fac, u_bdry, lamb, &stz, y_prd, fflags, qs? qfn : dfn);
