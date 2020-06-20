@@ -2,10 +2,10 @@
 set palette defined ( 0. "#080818", 1/6. "#012093", 1/3. "#0433ff", 1/2. "#b628b4", 2/3. "#da225c", 5/6. "#ff9300", 1. "#ffcc00")
 set size ratio -1
 set view map
-a=1.
-b=1.
-xc=0.
-yc=0.
+a=20.
+b=20.
+xc=20.
+yc=20.
 xmin=xc-a;xmax=xc+a;ymin=yc-b;ymax=yc+b
 set autoscale zfix
 set autoscale cbfix

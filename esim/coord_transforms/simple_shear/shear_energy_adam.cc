@@ -123,7 +123,7 @@ int main(int argc,char **argv) {
     // Output fields and miscellaneous flags. 1-u,2-v,4-p,8-q,16-s,32-tau,
     // 64-chi,128-tem,256-dev,512-X,1024-Y,2048-(total strain components),
     // 4096-(total strain invariants),8192-(Lagrangian tracer output).
-    const unsigned int fflags=4|8|16|32|128|2048;
+    const unsigned int fflags=4|8|16|32|128|512|1024|2048;
 
     // Other parameters. The scale factor applies a scaling to the rate of
     // plasticity and the applied strain. It is used to allow for comparison
@@ -136,8 +136,9 @@ int main(int argc,char **argv) {
     const double adapt_fac=2e-3;            // Adaptivity factor
 
     // MD simulation-based continuum parameters
-    const int x_grid=32;              // Grid points in x-direction
-    const int y_grid=32;              // Grid points in y-direction
+    const int upscale=5;
+    const int x_grid=32*upscale;      // Grid points in x-direction
+    const int y_grid=32*upscale;      // Grid points in y-direction
     const double x_beg=0.0;           // x-origin (m)
     const double x_end=4e-8;          // x-terminus (m)
     const double y_beg=0.0;           // y-origin (m)
@@ -184,9 +185,9 @@ int main(int argc,char **argv) {
     //sim.initialize_random(5,580,20);
 
     // Carry out the simulation using the selected simulation method
-    int n_frames=100,steps=10;
+    int n_frames=100,steps=10*upscale;
     printf("Simulation time unit   : %g s\n",t_scale);
     printf("Final time             : %g (%g s) \n",tf,tf*t_scale);
-    printf("Quasi-static step size : %g \n",tf/(n_frames*steps));
-    qs?sim.solve_quasistatic(tf,n_frames,steps):sim.solve(tf,160);
+    printf("Quasi-static step size : %g \n",tf/(n_frames*steps*3));
+    qs?sim.solve_quasistatic(tf,n_frames,steps*3):sim.solve(tf,160);
 }

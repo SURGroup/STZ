@@ -114,9 +114,9 @@ while(-e "${e}/$ARGV[1].$a") {
     $ex="";$trf="$e/tra.$a";
     if($opt_u) {
         $Xfile="$odir/X$P.dat";
-        $ex.="$gpc ${e}/X.$a $Xfile r -4 0.2 41; ";
+        $ex.="$gpc ${e}/X.$a $Xfile r -6 4 14; ";
         $Yfile="$odir/Y$P.dat";
-        $ex.="$gpc ${e}/Y.$a $Yfile r -4 0.2 41; ";
+        $ex.="$gpc ${e}/Y.$a $Yfile r -6 4 14; ";
     }
 
     # Create temporary Gnuplot file

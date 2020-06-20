@@ -12,7 +12,7 @@ lflags=-L../../levelset -L../../shared -L.
 
 objs=common.o qs_multi.o shear_sim.o bi_interp.o extra.o
 src=$(patsubst %.o,%.cc,$(objs))
-execs=shear_energy shear_data shear_coord_transform shear_compare
+execs=shear_energy shear_data shear_coord_transform shear_compare shear_energy_adam
 
 all:
 	$(MAKE) -C ../../shared
@@ -30,6 +30,9 @@ include Makefile.dep
 libsbs.a: $(objs)
 	rm -f libsbs.a
 	ar rs libsbs.a $^
+
+shear_energy_adam: shear_energy_adam.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
 
 shear_energy: shear_energy.cc libsbs.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
