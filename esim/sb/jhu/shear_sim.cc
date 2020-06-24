@@ -695,7 +695,7 @@ void shear_sim::write_files(int k) {
 		printf("QS info %g %.12g %.12g\n",time,Q,max_qs);
 		output("proj",11,k);
 	}
-        if(fflags&4096) output("Dplastic",12,k);
+	if(fflags&4096) output("Dplastic",12,k);
 	if((fflags&8192)&&tr!=NULL) {
 		if(k>0) update_tracers();
 		//output_tracers_matrix("xx",0,k);
@@ -708,6 +708,12 @@ void shear_sim::write_files(int k) {
 	if(fflags&16384) {
 		calc_def_rate();
 		output("Dtotxy",11,k);
+	}
+	if(fflags&32768) {
+		compute_strain();
+		output("Exx",11,k);
+		output("Exy",12,k);
+		output("Eyy",13,k);
 	}
 }
 
@@ -750,7 +756,9 @@ void shear_sim::output(const char *prefix,const int mode,const int sn) {
 			case 9: while(bp<be) *(bp++)=(fp++)->X;break;
 			case 10: while(bp<be) *(bp++)=(fp++)->Y;break;
 			case 11: while(bp<be) *(bp++)=(fp++)->cu;break;
-			case 12: while(bp<be){
+			case 12: while(bp<be) *(bp++)=(fp++)->cv;break;
+			case 13: while(bp<be) *(bp++)=(fp++)->cp;break;
+			case 14: while(bp<be){
 					double dchi1,dchi2;
 					*(bp++)=stz->Dplastic(fp->dev(),fp->chi,dchi1,dchi2);
 					fp++;
@@ -850,8 +858,9 @@ void shear_sim::compute_strain() {
 	for(int j=0;j<n;j++) {
 		c_field *fp=fm+j*m;
 		for(int i=0;i<m;i++,fp++) {
-			double l1,l2,J,Jinv,Xx,Xy,Yx,Yy;
-			mat F,FT,FTF,sigma,Lam;
+			double J,Jinv,Xx,Xy,Yx,Yy;
+			mat F;
+			sym_mat E;
 
 			// Calculate x derivatives of the reference map fields
 			if(i==0) {
@@ -879,14 +888,12 @@ void shear_sim::compute_strain() {
 			J=1/(Jinv=Xx*Yy-Xy*Yx);
 			F=mat(Yy*J,-Xy*J,-Yx*J,Xx*J);
 
-			// Compute the strain tensor
-			FT=F.transpose();
-			FTF=FT*F;
-			FTF.sym_eigenvectors(l1,l2,Lam);
-			if(l1>0||l2>0) {
-				sigma=Lam.transpose()*mat(0.5*log(l1),0,0,0.5*log(l2))*Lam;
-				fp->cu=sigma.devmod();
-			} else fp->cu=0;
+			// Compute the Green-Lagrange strain tensor E
+			E=F.ATA();
+			E.a-=1.;E.d-=1.;E*=0.5;
+
+			// Store components of E
+			fp->cu=E.a;fp->cv=E.b;fp->cp=E.d;
 		}
 	}
 }
