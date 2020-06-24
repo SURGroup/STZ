@@ -711,9 +711,9 @@ void shear_sim::write_files(int k) {
 	}
 	if(fflags&32768) {
 		compute_strain();
-		output("Exx",11,k);
-		output("Exy",12,k);
-		output("Eyy",13,k);
+		output("Exx",13,k);
+		output("Exy",14,k);
+		output("Eyy",15,k);
 	}
 }
 
@@ -724,7 +724,7 @@ void shear_sim::write_files(int k) {
 void shear_sim::output(const char *prefix,const int mode,const int sn) {
 
 	// Determine whether to output a staggered field or not
-	bool st=mode>=2&&mode<=8;
+	bool st=(mode>=2&&mode<=8)||mode>12;
 	int l=st?m:m+1;
 
 	// Assemble the output filename and open the output file
@@ -756,13 +756,14 @@ void shear_sim::output(const char *prefix,const int mode,const int sn) {
 			case 9: while(bp<be) *(bp++)=(fp++)->X;break;
 			case 10: while(bp<be) *(bp++)=(fp++)->Y;break;
 			case 11: while(bp<be) *(bp++)=(fp++)->cu;break;
-			case 12: while(bp<be) *(bp++)=(fp++)->cv;break;
-			case 13: while(bp<be) *(bp++)=(fp++)->cp;break;
-			case 14: while(bp<be){
-					double dchi1,dchi2;
-					*(bp++)=stz->Dplastic(fp->dev(),fp->chi,dchi1,dchi2);
-					fp++;
-			}
+			case 12: while(bp<be){
+						double dchi1,dchi2;
+						*(bp++)=stz->Dplastic(fp->dev(),fp->chi,dchi1,dchi2);
+						fp++;
+					 } break;
+			case 13: while(bp<be) *(bp++)=(fp++)->cu;break;
+			case 14: while(bp<be) *(bp++)=(fp++)->cv;break;
+			case 15: while(bp<be) *(bp++)=(fp++)->cp;
 		}
 		if(!st) *bp=mode==9?buf[1]+bx-ax:buf[1];
 		fwrite(buf,sizeof(float),l+1,outf);
@@ -855,34 +856,19 @@ void shear_sim::compute_strain() {
 
 	// Compute the stress on the regular grid
 #pragma omp parallel for
-	for(int j=0;j<=n;j++) {
+	for(int j=0;j<n;j++) {
 		c_field *fp=fm+j*m;
 		for(int i=0;i<m;i++,fp++) {
 			double J,Jinv,Xx,Xy,Yx,Yy;
 			mat F;
 			sym_mat E;
 
-			// Calculate x derivatives of the reference map fields
-			if(i==0) {
-				Xx=(fp+1)->X-(fp+(m-1))->X+(bx-ax);
-				Yx=(fp+1)->Y-(fp+(m-1))->Y;
-			} else if(i==m-1) {
-				Xx=(fp+(1-m))->X-(fp-1)->X+(bx-ax);
-				Yx=(fp+(1-m))->Y-(fp-1)->Y;
-			} else {
-				Xx=(fp+1)->X-(fp-1)->X;
-				Yx=(fp+1)->Y-(fp-1)->Y;
-			}
-			Xx*=0.5*xsp;Yx*=0.5*xsp;
-
-			// Calculate the y derivatives of the reference map fields
-			c_field *fu,*fd;
-			double yfac;
-			if(j==0) {yfac=ysp;fu=fp+m;fd=fp;}
-			else if(j==n) {yfac=ysp;fu=fp;fd=fp-m;}
-			else {yfac=0.5*ysp;fu=fp+m;fd=fp-m;}
-			Xy=yfac*(fu->X-fd->X);
-			Yy=yfac*(fu->Y-fd->Y);
+			// Calculate the Jacobian of the reference map
+			c_field *fr=i==m-1?fp-m+1:fp+1;
+			Xx=0.5*xsp*(-fp->X+fr->X-fp[m].X+fr[m].X+(i==m-1?2*(bx-ax):0));
+			Yx=0.5*xsp*(-fp->Y+fr->Y-fp[m].Y+fr[m].Y);
+			Xy=0.5*ysp*(-fp->X-fr->X+fp[m].X+fr[m].X);
+			Yy=0.5*ysp*(-fp->Y-fr->Y+fp[m].Y+fr[m].Y);
 
 			// Compute the deformation gradient tensor
 			J=1/(Jinv=Xx*Yy-Xy*Yx);
