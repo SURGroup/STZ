@@ -12,7 +12,7 @@ lflags=-L../../levelset -L../../shared -L.
 
 objs=common.o qs_multi.o shear_sim.o bi_interp.o extra.o
 src=$(patsubst %.o,%.cc,$(objs))
-execs=shear_energy shear_data shear_coord_transform shear_compare
+execs=shear_energy shear_energy_v2 shear_energy_Adam_no_MD shear_energy_Adam shear_energy_Adam2 shear_energy_Adam3 shear_data shear_data_v2 shear_data_Adam shear_coord_transform shear_compare shear_no_MD
 
 all:
 	$(MAKE) -C ../../shared
@@ -34,13 +34,37 @@ libsbs.a: $(objs)
 shear_energy: shear_energy.cc libsbs.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
 
+shear_energy_v2: shear_energy_v2.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_energy_Adam_no_MD: shear_energy_Adam_no_MD.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_energy_Adam: shear_energy_Adam.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_energy_Adam2: shear_energy_Adam2.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_energy_Adam3: shear_energy_Adam3.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
 shear_data: shear_data.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_data_v2: shear_data_v2.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_data_Adam: shear_data_Adam.cc libsbs.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
 
 shear_coord_transform: shear_coord_transform.cc libsbs.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
 
 shear_compare: shear_compare.cc libsbs.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
+
+shear_no_MD: shear_no_MD.cc libsbs.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -lsbs -lmatvec
 
 %.o: %.cc

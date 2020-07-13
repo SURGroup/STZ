@@ -10,9 +10,9 @@ include ../../config.mk
 iflags=-I../../tgmg -I../../shared
 lflags=-L../../shared -L.
 
-objs=shear_sim.o qs_multi.o common.o bi_interp.o
+objs=shear_sim.o qs_multi.o common.o bi_interp.o extra.o
 src=$(patsubst %.o,%.cc,$(objs))
-execs=shear_test2 shear_test3 shear_test4 shear_test5 interp_test
+execs=shear_test2 shear_test3 shear_test4 shear_test4_kat shear_test4_EGO shear_test5 interp_test
 
 all:
 	$(MAKE) -C ../../shared
@@ -37,6 +37,12 @@ shear_test3: shear_test3.cc libjhu.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -ljhu -lmatvec
 
 shear_test4: shear_test4.cc libjhu.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -ljhu -lmatvec
+
+shear_test4_kat: shear_test4_kat.cc libjhu.a
+	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -ljhu -lmatvec
+
+shear_test4_EGO: shear_test4_EGO.cc libjhu.a
 	$(cxx) $(cflags) $(iflags) -o $@ $< $(lflags) -ljhu -lmatvec
 
 shear_test5: shear_test5.cc libjhu.a

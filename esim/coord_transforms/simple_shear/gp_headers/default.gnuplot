@@ -26,7 +26,7 @@ MUL:unset xtics;unset ytics
 MUL:unset xlabel;unset ylabel;unset label 1;
 MUL:set surface
 RMP:set style line 3 lw 1 linecolor rgb "#ffffff"
-RMP:splot [xmin:xmax] [ymin:ymax] 'XFILE' u 1:2:(0.5) w l ls 3, 'YFILE' u 1:2:(0.5) w l ls 3
+RMP:splot [xmin:xmax-1] [ymin:ymax-1] 'XFILE' u 1:2:(0.5) w l ls 3, 'YFILE' u 1:2:(0.5) w l ls 3
 TRA:set pointsize 0.3
 TRA:set style line 1 linecolor rgb "#aaffcc" pt 7
 TRA:splot [xmin:xmax] [ymin:ymax] 'TRACERS' u 1:2:(0.5) ls 1 w p
