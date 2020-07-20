@@ -62,16 +62,6 @@ float col_green_and_blue[27]={
     235,108,255,
     255,255,255};
 
-float col_lilac[28]={
-    0.0,      255,200,0,
-    0.2,    255,252,122,
-    0.46,      255,255,255,
-    0.5,    200,137,255,
-    0.54,    40,50,255,
-    0.8,      32,45,148,
-    1,      0,20,70,
-};
-
 void gp_matrix_equal_palette(float *col,int q,float fv,float &re,float &gr,float &bl) {
     int k=static_cast<int>(fv*q);
     if(k<0) k=0;else if(k>q) k=q;
@@ -124,7 +114,6 @@ void gp_matrix_palette(png_byte*& rp,float fv,int ptype) {
         case 5: gp_matrix_equal_palette(col_red_white_blue,2,fv,re,gr,bl);break;
         case 6: gp_matrix_equal_palette(col_green_and_blue,8,fv,re,gr,bl);break;
         case 7: gp_matrix_variable_palette(col_purple_and_gray,7,fv,re,gr,bl);break;
-        case 8: gp_matrix_variable_palette(col_lilac,7,fv,re,gr,bl);break;
         default:
             {
                 fputs("Palette type not known\n",stderr);
@@ -881,7 +870,7 @@ void gp_matrix::l1_l2_norm(float &l1,float &l2) {
         l1+=fabs(*fp);l2+=*fp*(*fp);
     }
     float fac=1./mn;
-    l1*=fac;l2=sqrt(l2*fac);
+    l1*=fac;l2=sqrt(l2/mn);
 }
 
 /** Calculates the Lp norm of the field.

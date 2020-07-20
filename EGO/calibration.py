@@ -15,13 +15,14 @@ from sklearn.neighbors import LocalOutlierFactor
 from sklearn import svm
 from scipy.stats import norm
 import chaospy as cp
+import itertools as it
 
 plt.switch_backend('Agg')
 
 # Constants
 kB = 8.617330350e-5
 TZ = 21000
-nseed = 20190
+nseed = 7536654
 np.random.seed(nseed)
 qq = open("dictionary.txt","w")
 
@@ -95,8 +96,7 @@ class OptimizationModel:
                       (0.1,10),(0.1,10),(0.1,10),(0.1,10)]) 
 
         if self.kernelIndex == 3:
-            self.kernel = 1.0*RBF(length_scale=np.ones(np.size(X, 1)),length_scale_bounds=[(0.1,10),(0.1,10),(0.1,10),(0.1,10), \
-                      (0.1,10),(0.1,10),(0.1,10),(0.1,10)]) + C()
+            self.kernel = 1.0*RBF(length_scale=np.ones(np.size(X, 1))) + C()
 
         if self.priorkernel:
             self.kernel = self.priorkernel
@@ -138,7 +138,7 @@ class OptimizationModel:
         else:
             gp.fit(X, Y)
         
-        qq.write("%s\n" % gp.kernel_)
+        #qq.write("%s\n" % gp.kernel_)
         print("\nPosterior\n{}\n".format(gp.kernel_))
         self.priorkernel = gp.kernel_        
         return gp
@@ -186,27 +186,23 @@ class Parameter:
             self.text_so = 'chi_len'
             self.text_hc = r'$\ell_\chi$'
 
-        if self.name == 'kappa':
-            self.units_so = 'Angstroms'
-            self.units_hc = r'$\AA$'
-            self.text_so = 'kappa'
-            self.text_hc = r'$\kappa$'
-
         if self.name == 'c0':
             self.units_so = '--'
             self.units_hc = '--'
             self.text_so = 'c0'
             self.text_hc = r'$c_0$'
         
-        if self.name == 'eps0':
+        if self.name == 'ep':
             self.units_so = '--'
             self.units_hc = '--'
-            self.text_so = 'eps0'
+            self.text_so = 'ep'
             self.text_hc = r'$\varepsilon_0$'
-
-        if self.name == 'theta' or self.name == 'Delta' or self.name == 'chi_inf':
-            self.units_so = 'K'
-            self.units_hc = 'K'
+        
+        if self.name == 's_y':
+            self.units_so = 'GPa'
+            self.units_hc = 'GPa'
+            self.text_so = 's_y'
+            self.text_hc = r'$s_y$'
 
             try:
                 assert(self.vmin >= 0)
@@ -214,21 +210,9 @@ class Parameter:
                 print("Warning! {} cannot be negative. Minimimum set to 0 K.".format(self.name))
                 self.vmin = 0 
     
-            if self.name == 'theta':
-                self.text_so = 'theta'
-                self.text_hc = r'$\theta$'
-
-            if self.name == 'Delta':
-                self.text_so = 'Delta'
-                self.text_hc = r'$\Delta$'
-            
             if self.name == 'chi_inf':
                 self.text_so = 'chi_inf'
                 self.text_hc = r'$\chi_\infty$'
-
-        if self.name == 'sy' or self.name == 'mu' or self.name == 'K':
-            self.units_so = 'GPa'
-            self.units_hc = 'GPa'
 
             if vmin == -np.inf:
                 self.vmin = 0
@@ -238,37 +222,13 @@ class Parameter:
             else:
                 self.vmin = vmin
    
-            if self.name == 'sy':
-                self.text_so = 'sy'
-                self.text_hc = r'$\tau_y$'
-
-            if self.name == 'mu':
-                self.text_so = 'mu'
-                self.text_hc = r'$\mu$'
-
-            if self.name == 'K':
-                self.text_so = 'K'
-                self.text_hc = 'K'
-
-        if self.name == 'rho':
-            self.units_so = 'kg/m^3'
-            self.units_hc = r'kg/m$^3$'
-            self.text_so = 'rho'
-            self.text_hc = r'$\rho$'
-            
-        if self.name == 'Omega':
-            self.units_so = 'Ang^3'
-            self.units_hc = r'$\AA^3$'
-            self.text_so = 'Omega'
-            self.text_hc = r'$\Omega$'
-           
             if self.vmin == -np.inf:
                 self.vmin = 1
             elif self.vmin < 0:
                 print("Warning! Volume cannot be less than or equal to 0.")
                 print("Volume set to 1 Angstrom.")
                 self.vmin = 1
- 
+
     def set_min(self, value):
         self.is_constant = False
         self.vmin = value
@@ -431,26 +391,35 @@ class Observation:
             # Calculate final steady-state effective temperature
             PE_f = np.amax(self.reference.getFieldValues('pe.MD.100'))
             T_inf = self.parameters.getValue('beta')*(PE_f-self.parameters.getValue('u0'))*TZ
+    
+            # Neglect b,u0 values that result in a negative (or another threshold) value of the final MD eff. temp. field
+            PE_MD_final = self.reference.getFieldValues('pe.MD.100')
+            T_MD_final = self.parameters.getValue('beta')*(PE_MD_final-self.parameters.getValue('u0'))*TZ
+           
+            #  --  Neglect b,u0 values that result in a negative (or another threshold) value of the initial eff. temp. field 
+            # PE_MD_initial = self.reference.getFieldValues('pe.MD.0')
+            # T_initial = self.parameters.getValue('beta')*(PE_MD_initial-self.parameters.getValue('u0'))*TZ # used to initialize CM
+            
+            # Condition
+            if np.any(T_MD_final<20)==True or np.any(T_MD_final>3000)==True:
+
+                self.distance = np.nan
+                return self.distance
+
         
         self.parameters.setValue('chi_inf', T_inf)
-
-        command = ['shear_energy', 'qs', PE_0, 
+        
+        command = ['shear_energy_Adam3', 'qs', PE_0, 
                     '{}'.format(self.parameters.getValue('beta')), 
                     '{}'.format(self.parameters.getValue('u0')),
+                    'chi_inf', '{}'.format(T_inf),
                     'chi_len', '{}'.format(self.parameters.getValue('chi_len')),
                     'c0', '{}'.format(self.parameters.getValue('c0')),
-                    'eps0', '{}'.format(self.parameters.getValue('eps0')),
-                    'Omega', '{}'.format(self.parameters.getValue('Omega')),
-                    'theta', '{}'.format(self.parameters.getValue('theta')),
-                    'Delta', '{}'.format(self.parameters.getValue('Delta')),
-                    'chi_inf', '{}'.format(self.parameters.getValue('chi_inf')),
-                    'sy', '{}'.format(self.parameters.getValue('sy')),
-                    'mu', '{}'.format(self.parameters.getValue('mu')),
-                    'K', '{}'.format(self.parameters.getValue('K')),
-                    'rho', '{}'.format(self.parameters.getValue('rho'))]
+                    'ep', '{}'.format(self.parameters.getValue('ep')),
+                    's_y', '{}'.format(self.parameters.getValue('s_y'))]
 
         try:    
-            subprocess.run(command, timeout=120)
+            subprocess.run(command, timeout=360)
 
             om = self.optimizationModel
             finalCMStrainField = om.continuumOutPath + '/' + om.strainFieldPrefix + '{}'.format(om.nContinuumFrames-1)
@@ -575,7 +544,8 @@ class Observation:
                     print('Comparing strain fields at specific strain values.')
 
                     # Compare frames N frames in single go
-                    strain = [0.02, 0.04, 0.06, 0.08, 0.09, 0.10, 0.2, 0.35, 0.5]
+                    
+                    strain = [0.05, 0.06, 0.08, 0.09, 0.10, 0.11, 0.12, 0.35, 0.5]
                     gamOBS = np.linspace(0, 0.5, om.nContinuumFrames)
     
                     A = []
@@ -622,17 +592,9 @@ class Observation:
                         nyB = int(B_[0]) + 1
                         nxB = int(len(B_)/nyB)
                         B_ = B_.reshape(nxB, nyB)
-                        B_ = B_[1:, 1:]
+                        B_ = 2.*B_[1:, 1:]
                         B.append(B_)
 
-                    #A = np.concatenate(A)
-                    #B = np.concatenate(B)
-
-                    #A = A.reshape((int(np.sqrt(A.size)), int(np.sqrt(A.size))))
-                    #B = B.reshape((int(np.sqrt(B.size)), int(np.sqrt(B.size))))
-                    #self.distance, self.r0, self.rR = compareMatrices(A, B, stol=om.rankTolerance, \
-                    #               constantrank=om.decompositionRank, verbose=om.verboseDecomposition)
-                    
                     distance_temp = np.zeros(len(A))
                     r0_temp = np.zeros(len(A))
                     rR_temp = np.zeros(len(A))
@@ -640,10 +602,10 @@ class Observation:
                         distance_temp[k], r0_temp[k], rR_temp[k] = compareMatrices(A[k], B[k], \
                             stol=om.rankTolerance, constantrank=om.decompositionRank, \
                             verbose=om.verboseDecomposition)
-                    distance1 = np.sum(distance_temp)/len(A)
+                    distance1 = np.mean(distance_temp)   # Grassmann distance of strain fields
                     self.r0 = r0_temp
                     self.rR = rR_temp
-
+                    
 
                     # Also, Sum of Difference in Stress Magnitudes 
                     strain_cm = np.linspace(0, self.reference.maxStrain, om.nContinuumFrames)
@@ -655,24 +617,25 @@ class Observation:
                     tau_MD = -1*tau_MD[:, self.reference.stressCol]/10000.
                     strain_MD = np.linspace(0, self.reference.maxStrain, len(tau_MD))
 
-
-                    for i in np.arange(0, om.nContinuumFrames-80):
-
-                        stress_cm[i] = computeContinuumDeviatoricStress(\
-                            om.continuumOutPath, i)
-
-                        ix = np.argmin(np.abs(tau_MD-strain_cm[i]))
-                        distance_i[i] = np.abs(tau_MD[ix]-stress_cm[i])
                     
-                    distance2 = np.sum(distance_i)/21                   
+                    for i in range(0, om.nContinuumFrames):
+
+                        stress_cm[i] = self.parameters.getValue('s_y')*computeContinuumDeviatoricStress(\
+                            om.continuumOutPath, i)
+                        
+                        ix = np.argmin(np.abs(strain_MD-strain_cm[i]))
+                        distance_i[i] = np.abs(tau_MD[ix]-stress_cm[i])
+                        
+                    distance_i[15:28] *= 5
+                    distance2 = np.sum(distance_i)/np.count_nonzero(distance_i)                   
                     
                     # print the distances in a .txt file
-                    save_dist = np.array([distance1,distance2]).reshape((-1,1))
+                    save_dist = np.array([distance1,distance2]).reshape((1,-1))
                     np.savetxt(qq,save_dist)                    
  
-                    # Combined average Grassmann distance at 9 strain field snapshots and average difference of stress magnitudes at all 100 frames 
-                    self.distance = distance1
-                    print('Distance from Grassmann is {}, while for stress difference is {}'.format(distance1, distance2))
+                    # Combined average Grassmann distance at 9 strain field snapshots and 
+                    # average difference of stress magnitudes at all 100 frames                     
+                    self.distance = (1*distance1 + 3*distance2)/4 
                     print('Distance is {}.'.format(self.distance))
 
                 else: 
@@ -1006,17 +969,12 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
     textStr = '\n'.join((
         r'$\beta$ = %.4f eV$^{-1}$' % (parameters.getValue('beta'), ),
         r'$u_0$ = %.4f eV' % (parameters.getValue('u0'), ),
+        r'$T_\infty$ = %d K' % (parameters.getValue('chi_inf'), ),
         r'$l_\chi$ = %.3f $\AA$' % (parameters.getValue('chi_len'), ),
         r'$c_0$ = %.3f --' % (parameters.getValue('c0'), ),
-        r'$\epsilon_0$ = %.3f --' % (parameters.getValue('eps0'), ),
-        r'$\Omega$ = %d $\AA^3$' % (parameters.getValue('Omega'), ),
-        r'$\theta$ = %d K' % (parameters.getValue('theta'), ),
-        r'$\Delta$ = %d K' % (parameters.getValue('Delta'), ),
-        r'$T_\infty$ = %d K' % (parameters.getValue('chi_inf'), ),
-        r'$\sigma_y$ = %.2f GPa' % (parameters.getValue('sy'), ),
-        r'$\mu$ = %.2f GPa' % (parameters.getValue('mu'), ),
-        r'K = %.2f GPa' % (parameters.getValue('K'), ),
-        r'$\rho$ = %d kg $\cdot m^{-3}$' % (parameters.getValue('rho'), )))
+        r'$\epsilon_0$ = %.3f --' % (parameters.getValue('ep'), ),
+        r'$s_y$ = %.3f GPa' % (parameters.getValue('s_y'), )))
+
 
     ax = plt.subplot(334)
     ax.axis('off')
@@ -1032,7 +990,7 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
     plt.subplot(333)
     plt.title(r'$T_{0}$')
-    plt.contourf(T0, cmap='magma')
+    plt.contourf(T0, cmap='viridis')
     plt.colorbar()
     plt.axis('off')
 
@@ -1044,7 +1002,7 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
     plt.subplot(335)
     plt.title(r'${T_{f}}^{CM}$')
-    plt.contourf(Tf_CM, cmap='magma')
+    plt.contourf(Tf_CM, cmap='viridis')
     plt.colorbar()
     plt.axis('off')
 
@@ -1052,11 +1010,11 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
     fileName = optimizationModel.continuumOutPath + '/' + optimizationModel.strainFieldPrefix + '{}'.format(int(optimizationModel.nContinuumFrames-1))
     Exy_CM = np.fromfile(fileName, dtype=np.float32)
     Exy_CM = Exy_CM.reshape(nx, ny)
-    Exy_CM = Exy_CM[1:, 1:]
+    Exy_CM = 2*Exy_CM[1:, 1:]
 
     plt.subplot(336)
     plt.title(r'${\Gamma_{f}}^{CM}$')
-    plt.contourf(Exy_CM, cmap='magma')
+    plt.contourf(Exy_CM, cmap='viridis')
     plt.colorbar()
     plt.axis('off')
 
@@ -1070,10 +1028,10 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
     
         for it in np.arange(0, optimizationModel.nContinuumFrames):
 
-            tau_CM[it] = computeContinuumDeviatoricStress(\
+            tau_CM[it] = parameters.getValue('s_y')*computeContinuumDeviatoricStress(\
                 optimizationModel.continuumOutPath, it)
 
-            tau_Ref[it] = computeContinuumDeviatoricStress(\
+            tau_Ref[it] = parameters.getValue('s_y')*computeContinuumDeviatoricStress(\
                 reference.sourceDir, it)
             
 
@@ -1093,7 +1051,7 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
         plt.subplot(338)
         plt.title(r'${T_{f}}^{Ref}$')
-        plt.contourf(Tf_Ref, cmap='magma')
+        plt.contourf(Tf_Ref, cmap='viridis')
         plt.colorbar()
         plt.axis('off')
 
@@ -1105,7 +1063,7 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
         plt.subplot(339)
         plt.title(r'${\Gamma_{f}}^{Ref}$')
-        plt.contourf(Exy_Ref, cmap='magma')
+        plt.contourf(Exy_Ref, cmap='viridis')
         plt.colorbar()
         plt.axis('off')
 
@@ -1123,7 +1081,7 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
         for it in np.arange(0, optimizationModel.nContinuumFrames):
 
-            tau_CM[it] = computeContinuumDeviatoricStress(\
+            tau_CM[it] = parameters.getValue('s_y')*computeContinuumDeviatoricStress(\
                 optimizationModel.continuumOutPath, it)
 
         plt.subplot(332)
@@ -1141,17 +1099,17 @@ def plotComparison(parameters, optimizationModel, reference, X, Y):
 
         plt.subplot(338)
         plt.title(r'${T_{f}}^{Ref}$')
-        plt.contourf(Tf_Ref, cmap='magma')
+        plt.contourf(Tf_Ref, cmap='viridis')
         plt.colorbar()
         plt.axis('off')
 
-        # Plot Final CM strain field
+        # Plot Final MD strain field
         fileName = reference.sourceDir + '/' + reference.strainFieldPrefix + '{}'.format(int(reference.nFields-1))
         Exy_Ref = np.loadtxt(fileName, skiprows=1)
 
         plt.subplot(339)
         plt.title(r'${\Gamma_{f}}^{Ref}$')
-        plt.contourf(Exy_Ref, cmap='magma')
+        plt.contourf(Exy_Ref, cmap='viridis')
         plt.colorbar()
         plt.axis('off')
 
@@ -1178,15 +1136,17 @@ def plotConvergence(X, Y, parameters, optimizationModel, nPanes=4, targetVals={}
     i_rmin = [Y_list.index(item) for item in Y_rmin]
 
     plt.figure(figsize=(8.5, 3))
-    plt.plot(nObs, Y, '.')
-    plt.plot(nObs, Y_rmin, color='green')
-    plt.plot(iMin+1, Y[iMin], color='black', marker='s')
-    plt.axvspan(1, optimizationModel.nInitialObs, color='black', alpha=0.1)
+    plt.plot(nObs[:optimizationModel.nInitialObs], Y[:optimizationModel.nInitialObs], '.', label='Initial samples') 
+    plt.plot(nObs[optimizationModel.nInitialObs:], Y[optimizationModel.nInitialObs:], '.', color='darkorange', label='New samples')
+    plt.plot(nObs, Y_rmin, color='black', label='Current best')
+    plt.plot(iMin+1, Y[iMin], color='red', marker='s', markerfacecolor='none', label='Optimal')
+    plt.axvspan(1, optimizationModel.nInitialObs, color='black', alpha=0.04)
     Ynan = nObs[np.isnan(Y)]
     #for anan in Ynan:
     #    plt.axvline(anan, linestyle='--', color='red')
     plt.xlabel('n')
     plt.ylabel('d')
+    plt.legend()
     plt.xlim(left=1)
     plt.tight_layout()
     plt.savefig(fname='Convergence-0.png')
@@ -1206,18 +1166,22 @@ def plotConvergence(X, Y, parameters, optimizationModel, nPanes=4, targetVals={}
                         plt.axhline(y=targetVals[param.name], color='black', \
                             linestyle='-', linewidth=2)        
                     
-                    plt.plot(nObs, X[:, ip], '.')
+                    plt.plot(nObs[:optimizationModel.nInitialObs], X[:optimizationModel.nInitialObs, ip], '.', \
+                            label='Initial samples') 
+                    plt.plot(nObs[optimizationModel.nInitialObs:], X[optimizationModel.nInitialObs:, ip], '.', \
+                            color='darkorange', label='New samples')
                     
                     # Plot running best line, current best point
-                    plt.plot(nObs, X[i_rmin, ip], color='green', \
-                            linestyle='-', linewidth=2)
-                    plt.plot(iMin+1, X[iMin, ip], color='black', marker='s')
+                    plt.plot(nObs, X[i_rmin, ip], color='black', \
+                            linestyle='-', linewidth=2, label='Current best')
+                    plt.plot(iMin+1, X[iMin, ip], color='red', marker='s', markerfacecolor='none', markersize=8, label='Optimal')
 
                     #plt.axhline(X[iMin, ip], linestyle='--', color='red')
-                    plt.axvspan(1, optimizationModel.nInitialObs, color='black', alpha=0.1)
+                    plt.axvspan(1, optimizationModel.nInitialObs, color='black', alpha=0.04)
                     #plt.axvline(optimizationModel.nInitialObs, linestyle='--', color='black')
                     plt.ylabel(param.text_hc)
                     plt.xlabel('n')
+                    plt.legend()
                     plt.xlim(left=1)
                     print("{} is in figure {}, subplot {}.".format(param.name, iFig, iSubplot))
                     iSubplot += 1
@@ -1356,7 +1320,7 @@ def plotFields(X, Y, parameters, reference, optimizationmodel, colorMap='inferno
         stress_cm = np.zeros(strain_cm.shape)
 
         for ij, vj in enumerate(strain_cm):
-            stress_cm[ij] = computeContinuumDeviatoricStress(\
+            stress_cm[ij] = parameters.getValue('s_y')*computeContinuumDeviatoricStress(\
                 optimizationmodel.continuumOutPath, ij)
 
         plt.plot(reference.strain, reference.stress, \
@@ -1569,10 +1533,10 @@ def main():
     peMD0 = ref.getFieldValues('pe.MD.0')
     
     # Initialize optimization model 
-    om = OptimizationModel(nInitialObs=250, nTotalObs=500, nSurrEvals=200000, \
+    om = OptimizationModel(nInitialObs=650, nTotalObs=4000, nSurrEvals=1500000, \
                             samplingstyle=1,\
                             distanceMetric=4, decompositionRank=1, verboseDecomposition=True,\
-                            rankTolerance=1e-5, kernelIndex=2, \
+                            rankTolerance=1e-5, kernelIndex=3, \
                             detectOutliers=False, contamination=0.05, anomoly_algorithm="Local Outlier Factor")
     
     #plt.figure()
@@ -1580,21 +1544,15 @@ def main():
     #plt.savefig('testing.png')
 
     # Generate initial parameter list`
-    beta = Parameter('beta', 8.00 , vmin=4, vmax=10)
-    u0 = Parameter('u0', -3.3626, vmin=-3.363, vmax=-3.362)
-    chi_len = Parameter('chi_len', 15, vmin=0.5, vmax=5)
-    eps0 = Parameter('eps0', 0.55, vmin=0.6, vmax=0.8)
-    c0 = Parameter('c0', 0.3, vmin=0.2, vmax=0.4)
-    omega = Parameter('Omega', 140, vmin=110, vmax=160)
-    theta = Parameter('theta', 100, vmin=90, vmax=110)
-    delta = Parameter('Delta', 1500, vmin=1900, vmax=2100)
-    chi_inf = Parameter('chi_inf', 3000)
-    sy = Parameter('sy', 0.85)
-    mu = Parameter('mu', 20)
-    K = Parameter('K', 143.23)
-    rho = Parameter('rho', 7234)
-    
-    parameters = Parameters([beta, u0, chi_len, eps0, c0, omega, theta, delta, chi_inf, sy, mu, K, rho])
+    beta = Parameter('beta', 8.00 , vmin=2, vmax=15)
+    u0 = Parameter('u0', -3.3626, vmin=-3.390, vmax=-3.355)
+    chi_len = Parameter('chi_len', 4.01, vmin=3, vmax=60)
+    ep = Parameter('ep', 10, vmin=5, vmax=50)
+    c0 = Parameter('c0', 0.3, vmin=0.05, vmax=1)
+    chi_inf = Parameter('chi_inf', 2730)
+    s_y = Parameter('s_y', 0.95, vmin=0.8, vmax=1.1)
+
+    parameters = Parameters([beta, u0, chi_inf, chi_len, c0, ep, s_y])
 
     # Initialize dictionary to contain parameter, value pairs
     initparams = {}
@@ -1625,22 +1583,16 @@ def main():
     PE_f = np.amax(ref.getFieldValues('pe.MD.100'))
     T_inf = parameters.getValue('beta')*(PE_f-parameters.getValue('u0'))*TZ
 
-    command = ['shear_energy', 'qs', PE_0, 
+    command = ['shear_energy_Adam3', 'qs', PE_0, 
                 '{}'.format(parameters.getValue('beta')), 
                 '{}'.format(parameters.getValue('u0')),
+                'chi_inf', '{}'.format(T_inf),
                 'chi_len', '{}'.format(parameters.getValue('chi_len')),
                 'c0', '{}'.format(parameters.getValue('c0')),
-                'eps0', '{}'.format(parameters.getValue('eps0')),
-                'Omega', '{}'.format(parameters.getValue('Omega')),
-                'theta', '{}'.format(parameters.getValue('theta')),
-                'Delta', '{}'.format(parameters.getValue('Delta')),
-                'chi_inf', '{}'.format(T_inf),
-                'sy', '{}'.format(parameters.getValue('sy')),
-                'mu', '{}'.format(parameters.getValue('mu')),
-                'K', '{}'.format(parameters.getValue('K')),
-                'rho', '{}'.format(parameters.getValue('rho'))]
+                'ep', '{}'.format(parameters.getValue('ep')),
+                's_y', '{}'.format(parameters.getValue('s_y'))]
 
-    subprocess.run(command, timeout=120)
+    subprocess.run(command, timeout=360)
     
     command = ['mv', 'sct_q.out/', 'reference/']
     subprocess.run(command)
