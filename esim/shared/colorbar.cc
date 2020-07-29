@@ -22,7 +22,7 @@ int main(int argc,char **argv) {
 
 	// Check the palette number
     ptype=atoi(argv[4]);
-    if(ptype<0||ptype>8) {
+    if(ptype<0||ptype>7) {
         fputs("Palette number out of range\n",stderr);
         return 1;
     }

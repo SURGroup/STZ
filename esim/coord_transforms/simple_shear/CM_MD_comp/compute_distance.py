@@ -14,7 +14,7 @@ kB = 8.617330350e-5
 beta=8.0
 u0=-3.363
  
-refDir="/home-3/kkontol1@jhu.edu/CuZr_Ref/"
+refDir="/Users/katianakontolati/Projects/continuum_optimization/STZ/CuZr_Ref/"
 fileDir = 'sct_q.out/'
 PE_0 = refDir+'pe.MD.0'
 
@@ -93,7 +93,7 @@ for t, it in enumerate(time):
   TAU = TAU.reshape(nx, ny)
   TAU = TAU[1:, 1:]
   
-  tau[it] = 0.87657185*np.mean(TAU)
+  tau[it] = 0.85*np.mean(TAU)
 
 
 #plt.title(r'${T_{f}}^{CM}$')
@@ -189,7 +189,7 @@ def compareMatrices(A, B, verbose=False):
 
 
 
-strain = [0.05, 0.06, 0.08, 0.09, 0.10, 0.11, 0.12, 0.35, 0.5]
+strain =  [0.05, 0.06, 0.08, 0.09, 0.10, 0.11, 0.12, 0.35, 0.5]
 gamOBS = np.linspace(0, 0.5, 101)
 A = []
 B = []

@@ -14,7 +14,7 @@ kB = 8.617330350e-5
 beta=8.0
 u0=-3.363
  
-refDir="/home-3/kkontol1@jhu.edu/CuZr_Ref/"
+refDir="/Users/katianakontolati/Projects/continuum_optimization/STZ/CuZr_Ref/"
 fileDir = 'sct_q.out/'
 PE_0 = refDir+'pe.MD.0'
 

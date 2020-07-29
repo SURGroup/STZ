@@ -25,7 +25,7 @@ int main(int argc,char **argv) {
 			power=true;gamma=atof(argv[i+1]);i+=2;
 		} else if(strcmp(argv[i],"-p")==0) {
 			ptype=atoi(argv[i+1]);
-			if(ptype<0||ptype>8) {
+			if(ptype<0||ptype>7) {
 				fputs("Palette type out of range\n",stderr);
 				return 1;
 			}

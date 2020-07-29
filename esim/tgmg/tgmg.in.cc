@@ -150,11 +150,7 @@ void tgmg_base<S,V,M>::gauss_seidel() {
 
             // Stripped Gauss-Seidel, using OpenMP locks to ensure that the
             // strips don't conflict with each other
-#ifdef _OPENMP
             int t=omp_get_thread_num(),js=t*n/nthr_smooth*m,je=(t+1)*n/nthr_smooth*m;
-#else
-            int t=0,js=0,je=mn;
-#endif
             for(int j=js;j<je;j+=m) {
                 if(j==je-m&&(y_prd||t<nthr_smooth-1)) lock(t);
                 for(int i=0,ij=j;i<m;i++,ij++) z[ij]=q.inv_cc(i,ij,b[ij]-q.mul_a(i,ij));
@@ -188,11 +184,7 @@ void tgmg_base<S,V,M>::gauss_seidel_reverse() {
                 for(int i=m-1,ij=j;i>=0;i--,ij--) z[ij]=q.inv_cc(i,ij,b[ij]-q.mul_a(i,ij));
             }
         } else {
-#ifdef _OPENMP
             int t=omp_get_thread_num(),js=t*n/nthr_smooth*m,je=(t+1)*n/nthr_smooth*m;
-#else
-            int t=0,js=0,je=mn;
-#endif
             for(int j=je-1;j>=js;j-=m) {
                 if(j==js+m-1&&(y_prd||t!=0)) lock(num_l+(t==0?nthr_smooth-1:t-1));
                 for(int i=m-1,ij=j;i>=0;i--,ij--) z[ij]=q.inv_cc(i,ij,b[ij]-q.mul_a(i,ij));

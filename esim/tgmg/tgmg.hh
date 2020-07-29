@@ -87,9 +87,9 @@ class tgmg_base {
         int nthr_r;
         /** The number of threads for interpolation. */
         int nthr_t;
+#ifdef _OPENMP
         /** The number of OpenMP locks. */
         int num_l;
-#ifdef _OPENMP
         /** Locks to ensure that Gauss-Seidel is applied consistently. */
         omp_lock_t* ol;
         /** The class destructor destroys the OpenMP locks. */
@@ -134,7 +134,6 @@ class tgmg_base {
 #else
             // If OpenMP is not available, set the number of threads to 1
             nthr_max=nthr_smooth=nthr_r=nthr_t=nthr_simp=1;
-            num_l=0;
 #endif
         }
         void jacobi();
